@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Upload Books | Staff Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #3b82f6;
+            --accent: #1e40af;
+            --light: #f0f9ff;
+            --dark: #1e293b;
+            --success: #10b981;
+            --shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .upload-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .upload-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e2e8f0;
+            padding: 3rem;
+            max-width: 520px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+        
+        .card-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .header-icon {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+        
+        .card-header h2 {
+            color: var(--dark);
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+        }
+        
+        .card-subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .file-input-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .form-control {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            background: #f8fafc;
+            cursor: pointer;
+        }
+        
+        .form-control:hover {
+            border-color: var(--primary);
+            background: #f0f9ff;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: white;
+            border-style: solid;
+        }
+        
+        .btn-upload {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .btn-upload:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-back {
+            background: #64748b;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .btn-back:hover {
+            background: #475569;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(100, 116, 139, 0.3);
+        }
+        
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+            background: #dbeafe;
+            color: var(--accent);
+            border-left: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .file-info {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .file-info-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        .file-info-content {
+            color: #64748b;
+            line-height: 1.6;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2.5rem;
+        }
+        
+        .button-group .btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .upload-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .card-header h2 {
+                font-size: 1.75rem;
+            }
+            
+            .header-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 1.75rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .upload-card {
+                padding: 1.5rem;
+            }
+            
+            .card-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <div class="upload-card">
+            <!-- Header -->
+            <div class="card-header">
+                <div class="header-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h2>Bulk Upload Books</h2>
+                <div class="card-subtitle">Upload multiple books using Excel or CSV</div>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert">
+                        <i class="fas fa-info-circle"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Upload Form -->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- File Input -->
+                <div class="mb-4">
+                    <label class="form-label">Choose Excel/CSV File</label>
+                    <div class="file-input-container">
+                        <input type="file" name="file" class="form-control" required accept=".xlsx,.xls,.csv">
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-upload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        Upload File
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-back">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+            </form>
+            
+            <!-- File Information -->
+            <div class="file-info">
+                <div class="file-info-header">
+                    <i class="fas fa-info-circle"></i>
+                    <span>File Requirements</span>
+                </div>
+                <div class="file-info-content">
+                    <strong>Supported formats:</strong> Excel (.xlsx, .xls) and CSV files<br>
+                    <strong>Maximum file size:</strong> 10MB<br>
+                    <strong>Required columns:</strong> ISBN, Title, Author, Category
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,843 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIET Library Management</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <style>
+    /* ===== General Styles ===== */
+    :root {
+      --primary: #0d2a59;
+      --secondary: #f4c542;
+      --accent: #ff7e5f;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --gray: #6c757d;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      background-color: var(--light);
+    }
+    
+    /* ===== Custom Animations ===== */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(0px);
+      }
+    }
+    
+    .fade-in {
+      animation: fadeInUp 1s ease-out forwards;
+    }
+    
+    .pulse-hover:hover {
+      animation: pulse 1s infinite;
+    }
+    
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    /* ===== Navbar ===== */
+    .navbar {
+      background: rgba(13, 42, 89, 0.95) !important;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      padding: 15px 0;
+    }
+    
+    .navbar.scrolled {
+      padding: 10px 0;
+      background: rgba(13, 42, 89, 0.98) !important;
+    }
+    
+    .navbar-brand {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--secondary), #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .nav-link {
+      font-weight: 500;
+      margin: 0 10px;
+      position: relative;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: var(--secondary);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    /* ===== Hero Section ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(rgba(13, 42, 89, 0.85), rgba(13, 42, 89, 0.9)), url('{% static "img05.png" %}') center/cover no-repeat fixed;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23f4c542' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+      opacity: 0.3;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, #fff, var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .hero p {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    }
+    
+    .hero-btn {
+      padding: 12px 35px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      background: linear-gradient(45deg, var(--accent), #feb47b);
+      border: none;
+      box-shadow: 0 10px 20px rgba(255, 126, 95, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .hero-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 25px rgba(255, 126, 95, 0.4);
+    }
+    
+    /* ===== Section Styling ===== */
+    .section {
+      padding: 100px 0;
+    }
+    
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+    
+    .section-title.center {
+      text-align: center;
+      display: block;
+    }
+    
+    /* ===== Cards ===== */
+    .feature-card, .service-card, .achievement-box, .testimonial, .exam-card {
+      background: #fff;
+      border-radius: 15px;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      height: 100%;
+      position: relative;
+    }
+    
+    .feature-card::before, .service-card::before, .exam-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+    
+    .feature-card:hover, .service-card:hover, .achievement-box:hover, .testimonial:hover, .exam-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      display: inline-block;
+    }
+    
+    .feature-card .card-icon {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .service-card .card-icon {
+      color: var(--primary);
+    }
+    
+    .exam-card .card-icon {
+      color: var(--secondary);
+    }
+    
+    /* ===== Rules Section ===== */
+    .rules-section {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .rules-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 150px;
+      height: 150px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%230d2a59' fill-opacity='0.05' d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/svg%3E");
+    }
+    
+    .rules-header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    .rules-header h4 {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    
+    .rules-header h5 {
+      color: var(--primary);
+      font-weight: 600;
+      margin-top: 20px;
+    }
+    
+    .rules-list {
+      counter-reset: rule-counter;
+    }
+    
+    .rules-list li {
+      margin-bottom: 15px;
+      padding-left: 30px;
+      position: relative;
+    }
+    
+    .rules-list li::before {
+      counter-increment: rule-counter;
+      content: counter(rule-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      background: var(--primary);
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    
+    /* ===== Achievements ===== */
+    .achievement-box {
+      text-align: center;
+      padding: 30px 20px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+      transition: all 0.4s ease;
+    }
+    
+    .achievement-box h3 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    /* ===== Footer ===== */
+    footer {
+      background: linear-gradient(135deg, var(--dark) 0%, #2c3034 100%);
+      color: #bbb;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+    
+    .footer-link {
+      color: #bbb;
+      text-decoration: none;
+      transition: 0.3s;
+      position: relative;
+    }
+    
+    .footer-link::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 1px;
+      bottom: -2px;
+      left: 0;
+      background-color: var(--secondary);
+      transition: width 0.3s ease;
+    }
+    
+    .footer-link:hover {
+      color: var(--secondary);
+    }
+    
+    .footer-link:hover::after {
+      width: 100%;
+    }
+    
+    .social-icon {
+      font-size: 1.3rem;
+      color: #bbb;
+      transition: 0.3s;
+      display: inline-block;
+    }
+    
+    .social-icon:hover {
+      color: var(--secondary);
+      transform: translateY(-5px);
+    }
+    
+    /* ===== Back to Top Button ===== */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+    }
+    
+    .back-to-top.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .back-to-top:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* ===== Responsive ===== */
+    @media (max-width: 992px) {
+      .hero h1 {
+        font-size: 2.8rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .section {
+        padding: 80px 0;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      
+      .hero p {
+        font-size: 1.1rem;
+      }
+      
+      .section-title {
+        font-size: 1.8rem;
+      }
+      
+      .rules-section {
+        padding: 30px 20px;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .section-title {
+        font-size: 1.6rem;
+      }
+      
+      .section {
+        padding: 60px 0;
+      }
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <i class="bi bi-book-half me-2"></i>CIET Library
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#about">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#features">Features</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#exams">Exams</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#rules">Rules</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#services">Services</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#contact">Contact</a>
+        </li>
+        <li class="nav-item ms-2">
+          <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm pulse-hover">Login</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content container">
+    <div data-aos="fade-up" data-aos-duration="1000">
+      <h1>Welcome to CIET Library</h1>
+      <p>Explore Knowledge through Books, Journals, Digital Resources, and more</p>
+      <a href="{% url 'login' %}" class="btn hero-btn">Get Started</a>
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about" class="section">
+  <div class="container">
+    <h2 class="section-title center" data-aos="fade-up">About CIET Library</h2>
+    <div class="row align-items-center">
+      <div class="col-lg-6" data-aos="fade-right">
+        <p class="lead">The CIET Library is the intellectual hub of our institution, offering thousands of books, journals, and digital resources. Our mission is to make knowledge accessible, engaging, and impactful for all.</p>
+        <p>With state-of-the-art facilities and a dedicated team, we provide an environment conducive to learning, research, and innovation. Our collection spans across various disciplines, catering to the diverse academic needs of students and faculty.</p>
+      </div>
+      <div class="col-lg-6" data-aos="fade-left" data-aos-delay="200">
+        <img src="{% static 'imag 1.jpg' %}" class="img-fluid rounded shadow-lg float-animation" alt="Library">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="section bg-white">
+  <div class="container">
+    <h2 class="section-title center" data-aos="fade-up">Key Features</h2>
+    <div class="row g-4">
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+        <div class="card p-4 feature-card h-100 text-center">
+          <i class="bi bi-book-half card-icon"></i>
+          <h5 class="fw-bold">Vast Collection</h5>
+          <p>Over 50,000+ books, journals, and reference materials across all disciplines.</p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="card p-4 feature-card h-100 text-center">
+          <i class="bi bi-laptop card-icon"></i>
+          <h5 class="fw-bold">Digital Library</h5>
+          <p>Access thousands of e-books, research papers, and e-journals anytime, anywhere.</p>
+        </div>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="card p-4 feature-card h-100 text-center">
+          <i class="bi bi-bar-chart-line card-icon"></i>
+          <h5 class="fw-bold">Smart Analytics</h5>
+          <p>Track borrowing trends, top readers, and popular books with data-driven insights.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Government Exam Details -->
+<section id="exams" class="section">
+  <div class="container">
+    <h2 class="section-title center" data-aos="fade-up">Government Exam Details</h2>
+    <p class="lead text-center mb-5" data-aos="fade-up" data-aos-delay="100">Get information about important government exams and their official websites.</p>
+
+    <div class="row g-4">
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+        <div class="card p-4 exam-card h-100 text-center">
+          <i class="bi bi-award card-icon"></i>
+          <h5 class="fw-bold mt-3">TNPSC Exams</h5>
+          <p>Group 1, Group 2, and Group 4 exams are conducted by the Tamil Nadu Public Service Commission.</p>
+          <a href="{% url 'exam_dashboard' %}" class="btn btn-outline-primary btn-sm mt-3">View Details</a>
+        </div>
+      </div>
+
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="card p-4 exam-card h-100 text-center">
+          <i class="bi bi-briefcase card-icon"></i>
+          <h5 class="fw-bold mt-3">Bank Exams</h5>
+          <p>IBPS PO, SBI PO, and Clerk exams for various banking positions across India.</p>
+          <a href="{% url 'exam_dashboard' %}" class="btn btn-outline-success btn-sm mt-3">View Details</a>
+        </div>
+      </div>
+
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="card p-4 exam-card h-100 text-center">
+          <i class="bi bi-building card-icon"></i>
+          <h5 class="fw-bold mt-3">UPSC & SSC</h5>
+          <p>Explore details about IAS, IPS, SSC CGL, and CHSL exams from the central government.</p>
+          <a href="{% url 'exam_dashboard' %}" class="btn btn-outline-danger btn-sm mt-3">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Rules and Regulations Section -->
+<section id="rules" class="section bg-white">
+  <div class="container">
+    <div class="rules-section" data-aos="fade-up">
+      <div class="rules-header">
+        <h4>Coimbatore Institute of Engineering and Technology</h4>
+        <p><strong>Circular</strong></p>
+        <p><small>Ref: CIET/2015/81 &nbsp;&nbsp;&nbsp; Date: 09.07.2015</small></p>
+        <hr>
+        <h5 class="text-primary mt-3"><strong>Rules and Regulations of Central Library – for CIET Students</strong></h5>
+      </div>
+
+      <h6 class="fw-bold mt-4 mb-3 text-primary">General Rules:</h6>
+      <ol class="rules-list">
+        <li>The Library will be kept open from <strong>8.30 a.m. to 4.45 p.m.</strong> on all working days.</li>
+        <li>All students should become members of the college library by filling the appropriate forms.</li>
+        <li>All students should come to the Library in <strong>proper dress code without fail.</strong></li>
+        <li>All students must sign the Gate Register before entering the Library.</li>
+        <li>All students are requested to keep their belongings outside.</li>
+        <li>All users are instructed to take notes from Reference Books/Text Books/Journals/Magazines/Newspapers/Back Volumes/Project Reports, etc. using loose sheets only.</li>
+        <li><strong>Strict Silence</strong> must be observed in and around the Library. The Librarian may refuse the issue of books to such students.</li>
+        <li><strong>Usage of mobile phones is strictly prohibited</strong> inside the Library.</li>
+        <li>Books can be searched using the <strong>OPAC (Online Public Access Catalogue)</strong> system.</li>
+        <li>Books should be handled properly and kept covered.</li>
+        <li>Students must not mark, underline, or scribble in the books.</li>
+        <li>Students should check books at the time of issue for damages and report them immediately.</li>
+        <li>Folding, tearing, or underlining pages will be seriously viewed and penalized.</li>
+        <li>The Librarian reserves the right to recall any book at any time.</li>
+        <li><strong>Reference Books</strong> must be used inside the Library only and will not be lent for home reading.</li>
+        <li>Books, Journals, and Magazines after use must be replaced in their proper places.</li>
+      </ol>
+
+      <h6 class="fw-bold mt-4 mb-3 text-primary">Administration Rules:</h6>
+      <ul class="rules-list">
+        <li>The maximum number of books that can be taken by each UG student is <strong>4</strong> and by each PG student is <strong>8</strong>.</li>
+        <li>Books to be borrowed or renewed must be produced at the counter along with the identity card.</li>
+      </ul>
+
+      <div class="text-end mt-4">
+        <p class="fw-bold"><em>— Librarian</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section id="services" class="section">
+  <div class="container">
+    <h2 class="section-title center" data-aos="fade-up">Library Services</h2>
+    <div class="row g-4">
+      <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="0">
+        <div class="p-4 border-0 rounded shadow-sm service-card h-100 text-center">
+          <i class="bi bi-people card-icon"></i>
+          <h6 class="fw-bold mt-3">Student Services</h6>
+          <p>Borrow, renew, and reserve books easily.</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="p-4 border-0 rounded shadow-sm service-card h-100 text-center">
+          <i class="bi bi-person-badge card-icon"></i>
+          <h6 class="fw-bold mt-3">Faculty Services</h6>
+          <p>Exclusive access to research resources, journals, and projects.</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="p-4 border-0 rounded shadow-sm service-card h-100 text-center">
+          <i class="bi bi-wifi card-icon"></i>
+          <h6 class="fw-bold mt-3">E-Resources</h6>
+          <p>Connect to NPTEL, IEEE, Springer, and other online resources.</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="p-4 border-0 rounded shadow-sm service-card h-100 text-center">
+          <i class="bi bi-clock-history card-icon"></i>
+          <h6 class="fw-bold mt-3">Working Hours</h6>
+          <p>Mon–Fri: 9 AM – 7 PM<br>Sat: 9 AM – 3 PM<br>Sun: Closed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Achievements -->
+<section class="section bg-white">
+  <div class="container">
+    <h2 class="section-title center" data-aos="fade-up">Library Achievements</h2>
+    <div class="row g-4">
+      <div class="col-md-4 col-6" data-aos="fade-up" data-aos-delay="0">
+        <div class="p-4 achievement-box">
+          <h3 class="fw-bold">50k+</h3>
+          <p>Books & Journals</p>
+        </div>
+      </div>
+      <div class="col-md-4 col-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="p-4 achievement-box">
+          <h3 class="fw-bold">5000+</h3>
+          <p>Active Students</p>
+        </div>
+      </div>
+      <div class="col-md-4 col-6 mx-auto" data-aos="fade-up" data-aos-delay="200">
+        <div class="p-4 achievement-box">
+          <h3 class="fw-bold">100+</h3>
+          <p>Digital Resources Subscribed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="section text-center">
+  <div class="container">
+    <h2 class="section-title center" data-aos="fade-up">📬 Contact Us</h2>
+    <p data-aos="fade-up" data-aos-delay="100">📍 Coimbatore Institute of Engineering and Technology, Narasipuram, Coimbatore</p>
+    <p data-aos="fade-up" data-aos-delay="200">📞 +91 98765 43210 | 📧 library@ciet.ac.in</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="pt-5 pb-3">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 mb-4" data-aos="fade-up">
+        <h5 class="fw-bold text-warning">CIET</h5>
+        <p class="fst-italic">COIMBATORE INSTITUTE OF ENGINEERING AND TECHNOLOGY</p>
+        <p>Narasipuram, Coimbatore – 641109</p>
+        <p>📞 +91 422-2970703<br>✉ <a href="mailto:info@cietcbe.edu.in" class="text-warning footer-link">info@cietcbe.edu.in</a></p>
+      </div>
+      <div class="col-md-2 mb-4" data-aos="fade-up" data-aos-delay="100">
+        <h6 class="fw-bold text-uppercase">Main Links</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="footer-link">About us</a></li>
+          <li><a href="#" class="footer-link">Statutory Bodies</a></li>
+          <li><a href="#" class="footer-link">Non-Statutory Bodies</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 mb-4" data-aos="fade-up" data-aos-delay="200">
+        <h6 class="fw-bold text-uppercase">Approvals</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="footer-link">AICTE</a></li>
+          <li><a href="#" class="footer-link">Anna University</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 mb-4" data-aos="fade-up" data-aos-delay="300">
+        <h6 class="fw-bold text-uppercase">Information</h6>
+        <ul class="list-unstyled">
+          <li><a href="#" class="footer-link">Mandatory Disclosure</a></li>
+          <li><a href="#" class="footer-link">Committees</a></li>
+        </ul>
+      </div>
+      <div class="col-md-2 mb-4" data-aos="fade-up" data-aos-delay="400">
+        <h6 class="fw-bold text-uppercase">Follow Us</h6>
+        <div class="d-flex gap-3 mt-3">
+          <a href="https://www.facebook.com/cietinfo" class="social-icon"><i class="bi bi-facebook"></i></a>
+          <a href="https://www.linkedin.com/in/ciet-coimbatore/" class="social-icon"><i class="bi bi-linkedin"></i></a>
+          <a href="https://www.instagram.com/cietinfo/" class="social-icon"><i class="bi bi-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="row border-top pt-3 mt-3">
+      <div class="col-md-6" data-aos="fade-right">&copy; 2024 CIET. All Rights Reserved.</div>
+      <div class="col-md-6 text-md-end" data-aos="fade-left">
+        <a href="#" class="footer-link me-3">Privacy Policy</a>
+        <a href="#" class="footer-link">Terms & Conditions</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Back to Top Button -->
+<a href="#" class="back-to-top">
+  <i class="bi bi-arrow-up"></i>
+</a>
+
+<!-- Bootstrap JS + AOS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  // Initialize AOS
+  AOS.init({
+    duration: 1000,
+    once: true,
+    offset: 100
+  });
+  
+  // Navbar scroll effect
+  window.addEventListener('scroll', function() {
+    const navbar = document.querySelector('.navbar');
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+    
+    // Back to top button
+    const backToTop = document.querySelector('.back-to-top');
+    if (window.scrollY > 300) {
+      backToTop.classList.add('active');
+    } else {
+      backToTop.classList.remove('active');
+    }
+  });
+  
+  // Smooth scrolling for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        window.scrollTo({
+          top: target.offsetTop - 80,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

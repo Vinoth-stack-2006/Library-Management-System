@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Library Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #3498db;
+      --accent: #1abc9c;
+      --success: #27ae60;
+      --warning: #f39c12;
+      --danger: #e74c3c;
+      --light-bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-dark: #2c3e50;
+      --text-light: #7f8c8d;
+      --border-light: #e9ecef;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-dark);
+      min-height: 100vh;
+      padding-bottom: 2rem;
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .dashboard-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      border-radius: 0 0 20px 20px;
+      padding: 2rem 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+
+    .user-details h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .user-details p {
+      margin-bottom: 0;
+      opacity: 0.9;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    .stat-icon.books {
+      background: var(--secondary);
+    }
+
+    .stat-icon.slots {
+      background: var(--success);
+    }
+
+    .stat-icon.fine {
+      background: var(--danger);
+    }
+
+    .stat-icon.limit {
+      background: var(--primary);
+    }
+
+    .stat-content h3 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .stat-content p {
+      color: var(--text-light);
+      margin-bottom: 0;
+      font-size: 0.9rem;
+    }
+
+    .alert-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border-left: 4px solid;
+    }
+
+    .alert-card.danger {
+      border-left-color: var(--danger);
+    }
+
+    .alert-card.warning {
+      border-left-color: var(--warning);
+    }
+
+    .alert-card.success {
+      border-left-color: var(--success);
+    }
+
+    .alert-card .alert-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0.5rem;
+    }
+
+    .alert-card .alert-heading i {
+      font-size: 1.2rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .borrowed-books {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .book-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border-left: 4px solid;
+      background: var(--light-bg);
+      transition: transform 0.2s ease;
+    }
+
+    .book-item:hover {
+      transform: translateX(5px);
+    }
+
+    .book-item.normal {
+      border-left-color: var(--success);
+    }
+
+    .book-item.overdue {
+      border-left-color: var(--danger);
+    }
+
+    .book-item.due-soon {
+      border-left-color: var(--warning);
+    }
+
+    .book-info h5 {
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    .book-info p {
+      margin-bottom: 0.2rem;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .book-status {
+      text-align: right;
+    }
+
+    .status-badge {
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background: rgba(39, 174, 96, 0.15);
+      color: var(--success);
+    }
+
+    .badge-warning {
+      background: rgba(243, 156, 18, 0.15);
+      color: var(--warning);
+    }
+
+    .badge-danger {
+      background: rgba(231, 76, 60, 0.15);
+      color: var(--danger);
+    }
+
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .action-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.8rem;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      border: 1px solid var(--border-light);
+    }
+
+    .action-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.2rem;
+      font-size: 1.8rem;
+      color: white;
+    }
+
+    .action-icon.books {
+      background: var(--secondary);
+    }
+
+    .action-icon.newspapers {
+      background: var(--accent);
+    }
+
+    .action-icon.history {
+      background: var(--primary);
+    }
+
+    .action-card h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 0.8rem;
+    }
+
+    .action-card p {
+      color: var(--text-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-action {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-action:hover {
+      background: var(--secondary);
+      transform: scale(1.05);
+    }
+
+    .logout-section {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .btn-logout {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      padding: 0.6rem 1.8rem;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-logout:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    /* Preloader */
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--light-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .loader {
+      width: 70px;
+      height: 70px;
+      border: 5px solid rgba(44, 62, 80, 0.2);
+      border-top: 5px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+    }
+
+    /* Animations */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .dashboard-header {
+        padding: 1.5rem 1rem;
+      }
+      
+      .user-details h1 {
+        font-size: 1.5rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+      
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .book-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .book-status {
+        text-align: left;
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .user-info {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="loader"></div>
+</div>
+
+<div class="dashboard-container" style="display:none;" id="content">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="user-info">
+      <div class="user-avatar">
+        <i class="fas fa-user-graduate"></i>
+      </div>
+      <div class="user-details">
+        <h1>Welcome, {{ student_name }}!</h1>
+        <p>Student ID: {{ student_id }} | CIET Library</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Status Alerts -->
+  {% if total_fine > 0 %}
+  <div class="alert-card danger fade-in">
+    <div class="alert-heading">
+      <i class="fas fa-exclamation-circle"></i>
+      <h5>Outstanding Fine: ₹{{ total_fine }}</h5>
+    </div>
+    <p class="mb-0">Please pay your fine to continue borrowing books.</p>
+  </div>
+  {% endif %}
+
+  {% if active_count >= 4 %}
+  <div class="alert-card warning fade-in">
+    <div class="alert-heading">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h5>Maximum Limit Reached</h5>
+    </div>
+    <p class="mb-0">You have borrowed 4 books (maximum limit). Return a book to borrow more.</p>
+  </div>
+  {% elif can_borrow %}
+  <div class="alert-card success fade-in">
+    <div class="alert-heading">
+      <i class="fas fa-check-circle"></i>
+      <h5>Ready to Borrow</h5>
+    </div>
+    <p class="mb-0">You can borrow {{ remaining_slots }} more book{{ remaining_slots|pluralize }}!</p>
+  </div>
+  {% endif %}
+
+  <!-- Currently Borrowed Books -->
+  {% if active_borrows %}
+  <div class="borrowed-books fade-in">
+    <h3 class="section-title">
+      <i class="fas fa-book-open"></i>
+      Currently Borrowed Books ({{ active_count }}/4)
+    </h3>
+    
+    {% for borrow in active_borrows %}
+    <div class="book-item {% if borrow.is_overdue %}overdue{% elif borrow.overdue_days > -3 %}due-soon{% else %}normal{% endif %}">
+      <div class="book-info">
+        <h5>{{ borrow.book_name }}</h5>
+        <p><strong>Book ID:</strong> {{ borrow.book_id }}</p>
+        <p><strong>Borrowed:</strong> {{ borrow.borrowed_at|date:"d M Y" }}</p>
+        <p><strong>Due Date:</strong> {{ borrow.due_date|date:"d M Y" }}</p>
+      </div>
+      <div class="book-status">
+        {% if borrow.is_overdue %}
+          <span class="status-badge badge-danger">OVERDUE</span>
+          <p class="mt-2 mb-1"><strong>{{ borrow.overdue_days }} day{{ borrow.overdue_days|pluralize }} late</strong></p>
+          <p class="mb-0"><strong>Fine: ₹{{ borrow.fine_amount }}</strong></p>
+        {% else %}
+          <span class="status-badge badge-success">ON TIME</span>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Quick Actions -->
+  <div class="actions-grid">
+    <div class="action-card fade-in" onclick="location.href='/available/'">
+      <div class="action-icon books">
+        <i class="fas fa-book"></i>
+      </div>
+      <h3>Browse Books</h3>
+      <p>Search and view all books available in the library collection.</p>
+      <button class="btn-action">Explore Books</button>
+    </div>
+    
+    <div class="action-card fade-in" onclick="location.href='/newspaper-list/'">
+      <div class="action-icon newspapers">
+        <i class="fas fa-newspaper"></i>
+      </div>
+      <h3>View Newspapers</h3>
+      <p>Access the latest and archived newspapers in the library.</p>
+      <button class="btn-action">Read Newspapers</button>
+    </div>
+  </div>
+
+  <!-- Logout -->
+  <div class="logout-section fade-in">
+    <a href="/logout/" class="btn-logout">
+      <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+  </div>
+
+  <footer>
+    © 2025 CIET Library Management System | Student Dashboard
+  </footer>
+</div>
+
+<script>
+  window.addEventListener("load", function(){
+    document.getElementById("preloader").style.display = "none";
+    document.getElementById("content").style.display = "block";
+    
+    // Add fade-in animation to elements
+    const fadeElements = document.querySelectorAll('.fade-in');
+    fadeElements.forEach((el, index) => {
+      el.style.animationDelay = `${index * 0.1}s`;
+    });
+  });
+</script>
+
+</body>   
+</html>

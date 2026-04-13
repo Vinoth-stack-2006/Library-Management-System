@@ -1,0 +1,227 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ exam.name }} - Subbranches</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'exams/styles.css' %}">
+    <style>
+        body {
+            background-color: #f2f4f7;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        .exam-header {
+            display: flex;
+            align-items: center;
+            background-color: #02475e;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+
+        .exam-header img {
+            height: 70px;
+        }
+
+        .exam-header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .subbranch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .subbranch-card {
+            background-color: #02475e;
+            color: white;
+            padding: 30px 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .subbranch-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+        }
+
+        .subbranch-card h5 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background-color: #ffdd00;
+            color: #02475e;
+            font-weight: bold;
+            border-radius: 6px;
+            padding: 8px 20px;
+        }
+
+        .btn-primary:hover {
+            background-color: #ffc107;
+            color: #02475e;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+
+    <!-- Exam Header and Overview -->
+    <div class="exam-description mb-4 p-4 bg-light rounded shadow-sm">
+        <h1 class="display-5">{{ exam.name }}</h1>
+
+        {% if exam.name == "TNPSC" %}
+            <div class="header mb-3 d-flex align-items-center gap-3">
+                <img src="{% static 'logos/tnpsc-Logo.png' %}" alt="TNPSC Logo">
+                <div>
+                    <p>தமிழ்நாடு அரசுப் பணியாளர் தேர்வாணையம்</p>
+                    <h2>Tamil Nadu Public Service Commission</h2>
+                </div>
+            </div>
+            Tamil Nadu Public Service Commission is a government department in Tamil Nadu, which is responsible for the recruitment of eligible personnel into the State’s Public Service. 
+The State Service Commission of Tamil Nadu conducts Provincial Civil Services Exams on an annual basis. 
+Articles 316 to 319 of the Constitution of India deal with the structure of state public service commissions.
+The Commission consists of 15 Members including 1 Chairman. <br>
+
+<b>Functions of TNPSC Includes :</b> <br>
+Advise the Government on all matters relating to framing of recruitment rules.<br>
+Making appointments and promotions and transfers from one service to another service, in respect of disciplinary matters affecting government servants.<br>
+Conduct examinations for selection of candidates under direct recruitment to the State, Subordinate and Ministerial Services. <br>
+Conduct departmental examinations for government servants and examinations on behalf of the national Ministry of Defence.<br>
+TNPSC conducts a wide range of examinations throughout the year for the recruitment of various posts under the state government.<br> It provides candidates with the gateway to start their career in the state government as Group A & B officers and Subordinate staff as well.</p>
+        
+        {% else %}
+            {% if exam.name == "SSC" %}
+                <div class="header mb-3 d-flex align-items-center gap-3">
+                    <img src="{% static 'logos/ssc-Logo.png' %}" alt="SSC Logo">
+                    <div>
+                        <h2>Staff Selection Commission</h2>
+                        <p>(Government of India)</p>
+                    </div>
+                </div>
+                p>SSC (Staff Selection Commission) established in the year 1975 and its headquarter is situated in New Delhi. This autonomous body has been specially occupied in recruiting eligible students by conducting different examinations for numerous Ministries and the Department of India.
+                he SSC is a government-owned and government-funded organization that is responsible to conducts exams every year to recruit eligible candidates for Group-B and Group-C posts in several Organisations/departments/Ministers of the Government of India.
+            </p>
+            {% else %}
+                {% if exam.name == "UPSC" %}
+                    <div class="header mb-3 d-flex align-items-center gap-3">
+                        <img src="{% static 'logos/upsc-Logo.png' %}" alt="UPSC Logo">
+                        <div>
+                            <h2>Union Public Service Commission</h2>
+                            <p>(Government of India)</p>
+                        </div>
+                    </div>
+                    <p>The Full form of UPSC is Union Public Service Commission. One of the most competitive and prestigious exams, civil services, is conducted by the Union Public Service Commission (UPSC), India’s major regulating body. UPSC also conducts a number of competitive exams to fill-in various civil service vacancies for the government of India.
+                        The UPSC conducts the Civil Services Examination (CSE), popularly known as IAS (Indian Administrative Service) exam. It is conducted in two phases namely- UPSC Prelims and UPSC Mains. The prelims exam comprises objective-type questions, while the questions asked in mains need descriptive and essay-type answering. The UPSC is responsible for conducting various examinations for the post like IAS, IPS, IFS etc.</p>
+                {% else %}
+                    {% if exam.name == "GATE" %}
+                        <div class="header mb-3 d-flex align-items-center gap-3">
+                            <img src="{% static 'logos/gate-Logo.png' %}" alt="GATE Logo">
+                            <div>
+                                <h2>GATE - Graduate Aptitude Test in Engineering</h2>
+                            </div>
+                        </div>
+                        <p>The Graduate Aptitude Test in Engineering (GATE) is an entrance examination conducted in India for admission to technical postgraduate programs that tests the undergraduate subjects of engineering and sciences. GATE is conducted jointly by the Indian Institute of Science and seven Indian Institutes of Technology at Roorkee, Delhi, Guwahati, Kanpur, Kharagpur, Chennai (Madras) and Mumbai (Bombay) on behalf of the National Coordination Board – GATE, Department of Higher Education, Ministry of Education (MoE), Government of India.The GATE score of a candidate reflects the relative performance level of a candidate. The score is used for admissions to various post-graduate education programs (e.g. Master of Engineering, Master of Technology, Master of Architecture, Doctor of Philosophy) in Indian higher education institutes, with financial assistance provided by MoE and other government agencies. GATE scores are also used by several Indian public sector undertakings for recruiting graduate engineers in entry-level positions. It is one of the most competitive examinations in India. GATE is also recognized by various institutes outside India, such as Nanyang Technological University in Singapore.</p>
+        
+                    {% else %}
+                        {% if exam.name == "Railway" %}
+                            <div class="header mb-3 d-flex align-items-center gap-3">
+                                <img src="{% static 'logos/railway-Logo.jpeg' %}" alt="Railway Logo">
+                                <div>
+                                    <h2>Railway Recruitment Board Exams</h2>
+                                </div>
+                            </div>
+                            <p>Railways exams are conducted by the  RRB (Railway Recruitment Board) and RRC (Railway Recruitment Cells). Millions of candidates apply for the railway exams when the notification is released. RRBs are responsible for carrying out railway recruitment in the technical, paramedical, and ministerial departments. On the other hand, the RRCs are responsible for carrying out recruitment in the Group D posts. Railway exams are conducted for the post of RRB NTPC, RRB ALP, RRB Group D, etc. The eligibility criteria for each railway exam differ. Hence, candidates can apply for the RRB exams provided they fulfil the eligibility criteria as per the post. </p>
+      
+                        {% else %}
+                            {% if exam.name == "Banking" %}
+                                <div class="header mb-3 d-flex align-items-center gap-3">
+                                    <img src="{% static 'logos/Banking-Logo.jpeg' %}" alt="Banking Logo">
+                                    <div>
+                                        <h2>Banking Sector Exams</h2>
+                                    </div>
+                                </div>
+                                <p>The Indian banking sector plays a vital role in promoting financial inclusion and driving economic development. With 12 public sector banks in the country, recruitment is primarily managed by IBPS, except for the State Bank of India (SBI), which conducts its own exams. This centralized recruitment ensures transparency, merit-based selection, and strengthens the credibility of the industry. These banks are pivotal in delivering essential financial services across the nation, contributing to economic stability and inclusive growth.</p>
+
+                            {% else %}
+                                <div class="header mb-3 d-flex align-items-center gap-3">
+                                    <img src="{% static 'logos/default.png' %}" alt="Default Logo">
+                                    <div>
+                                        <h2>{{ exam.name }}</h2>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        {% if exam.description %}
+            <p class="lead"><strong>{{ exam.description }}</strong></p>
+        {% endif %}
+    </div>
+
+    <!-- Subbranch Cards -->
+    <div class="exam-header d-flex align-items-center gap-3 mb-4">
+        {% if exam.name == "TNPSC" %}
+            <img src="{% static 'logos/tnpsc-Logo.png' %}" alt="TNPSC Logo" height="80">
+        {% else %}
+            {% if exam.name == "SSC" %}
+                <img src="{% static 'logos/ssc-Logo.png' %}" alt="SSC Logo" height="80">
+            {% else %}
+                {% if exam.name == "UPSC" %}
+                    <img src="{% static 'logos/upsc-Logo.png' %}" alt="UPSC Logo" height="80">
+                {% else %}
+                    {% if exam.name == "GATE" %}
+                        <img src="{% static 'logos/gate-Logo.png' %}" alt="GATE Logo" height="80">
+                    {% else %}
+                        {% if exam.name == "Railway" %}
+                            <img src="{% static 'logos/railway-Logo.jpeg' %}" alt="Railway Logo" height="80">
+                        {% else %}
+                            {% if exam.name == "Banking" %}
+                                <img src="{% static 'logos/Banking-Logo.jpeg' %}" alt="Banking Logo" height="80">
+                            {% else %}
+                                <img src="{% static 'logos/default.png' %}" alt="Default Logo" height="80">
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+       <center> <h1 class="mb-0">{{ exam.name }} Subbranches</h1> </center>
+    </div>
+
+    <div class="subbranch-grid">
+        {% for sub in subbranches %}
+        <div class="subbranch-card">
+            <h5>{{ sub.name }}</h5>
+            <a href="{% url 'subbranch_details' sub.id %}" class="btn btn-primary">View Details</a>
+        </div>
+        {% empty %}
+        <p class="text-muted text-center">No subbranches available.</p>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'exam_dashboard' %}" class="btn btn-secondary btn-lg">⬅ Back to Dashboard</a>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #3498db;
+      --accent: #1abc9c;
+      --success: #27ae60;
+      --warning: #f39c12;
+      --danger: #e74c3c;
+      --info: #17a2b8;
+      --light-bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-dark: #2c3e50;
+      --text-light: #7f8c8d;
+      --border-light: #e9ecef;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-dark);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding: 40px 0 20px;
+    }
+
+    h1 {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 15px;
+    }
+
+    .subtitle {
+      color: var(--text-light);
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .dashboard-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 30px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dashboard-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--card-color), var(--card-color-light));
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      color: white;
+      background: linear-gradient(135deg, var(--card-color), var(--card-color-light));
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-description {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      margin-bottom: 25px;
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+
+    .card-button {
+      width: 100%;
+      font-weight: 500;
+      border-radius: 8px;
+      padding: 12px 20px;
+      transition: all 0.3s ease;
+      border: none;
+      background: var(--card-color);
+      color: white;
+    }
+
+    .card-button:hover {
+      background: var(--card-color-light);
+      transform: translateY(-2px);
+    }
+
+    /* Card color variations */
+    .card-borrow { 
+      --card-color: var(--warning);
+      --card-color-light: #f4b350;
+    }
+    
+    .card-view { 
+      --card-color: var(--info);
+      --card-color-light: #2dc5e0;
+    }
+    
+    .card-add { 
+      --card-color: var(--primary);
+      --card-color-light: #3d5a80;
+    }
+    
+    .card-student { 
+      --card-color: var(--success);
+      --card-color-light: #2ecc71;
+    }
+    
+    .card-staff { 
+      --card-color: var(--secondary);
+      --card-color-light: #5dade2;
+    }
+    
+    .card-hod { 
+      --card-color: var(--accent);
+      --card-color-light: #48c9b0;
+    }
+    
+    .card-delete { 
+      --card-color: var(--danger);
+      --card-color-light: #ec7063;
+    }
+    
+    .card-upload { 
+      --card-color: #9b59b6;
+      --card-color-light: #bb8fce;
+    }
+    
+    .card-details { 
+      --card-color: var(--info);
+      --card-color-light: #2dc5e0;
+    }
+    
+    .card-issue { 
+      --card-color: var(--warning);
+      --card-color-light: #f4b350;
+    }
+    
+    .card-purchase { 
+      --card-color: var(--primary);
+      --card-color-light: #3d5a80;
+    }
+    
+    .card-barcode { 
+      --card-color: var(--accent);
+      --card-color-light: #48c9b0;
+    }
+    
+    .card-donation { 
+      --card-color: #e84393;
+      --card-color-light: #fd79a8;
+    }
+    
+    .card-donors { 
+      --card-color: #00b894;
+      --card-color-light: #55efc4;
+    }
+
+    /* Stats section */
+    .stats-section {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 40px;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 15px;
+    }
+
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease forwards;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+      }
+      
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .dashboard-card {
+        padding: 25px;
+      }
+      
+      .card-title {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 15px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .dashboard-card {
+        padding: 20px;
+      }
+      
+      .card-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="dashboard-header fade-in">
+      <h1>Library Management Dashboard</h1>
+      <p class="subtitle">Streamline your library operations with our comprehensive management system</p>
+    </div>
+
+    <!-- Main Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Borrow & Return Book -->
+      <div class="dashboard-card card-borrow fade-in" onclick="location.href='/borrow/'">
+        <div class="card-icon">
+          <i class="fas fa-exchange-alt"></i>
+        </div>
+        <h3 class="card-title">Borrow & Return</h3>
+        <p class="card-description">Efficiently manage book borrowing and return records with our streamlined process and tracking system.</p>
+        <button class="card-button">Go to Borrow/Return</button>
+      </div>
+
+    <div class="dashboard-card card-view fade-in" onclick="location.href='/borrow-list/'">
+        <div class="card-icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h3 class="card-title">Borrow History</h3>
+        <p class="card-description">View your complete borrowing and return history.</p>
+        <button class="card-button">View History</button>
+      </div>
+      <!-- View Books -->
+      <div class="dashboard-card card-view fade-in" onclick="location.href='/available/'">
+        <div class="card-icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h3 class="card-title">View Books</h3>
+        <p class="card-description">Browse the complete catalog of available and borrowed books with detailed information and search functionality.</p>
+        <button class="card-button">View Books</button>
+      </div>
+
+      <!-- Add Book -->
+      <div class="dashboard-card card-add fade-in" onclick="location.href='/book-login/'">
+        <div class="card-icon">
+          <i class="fas fa-plus-circle"></i>
+        </div>
+        <h3 class="card-title">Add Book</h3>
+        <p class="card-description">Add new books to the library collection with detailed information, categorization, and inventory management.</p>
+        <button class="card-button">Go to Book Form</button>
+      </div>
+
+      <!-- Add Student -->
+      <div class="dashboard-card card-student fade-in" onclick="location.href='/student-login/'">
+        <div class="card-icon">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <h3 class="card-title">Add Student</h3>
+        <p class="card-description">Register new students with scanning capability for quick entry and comprehensive profile management.</p>
+        <button class="card-button">Go to Student Form</button>
+      </div>
+
+      <!-- Add Staff -->
+      <div class="dashboard-card card-staff fade-in" onclick="location.href='/admin-login/'">
+        <div class="card-icon">
+          <i class="fas fa-chalkboard-teacher"></i>
+        </div>
+        <h3 class="card-title">Add Staff</h3>
+        <p class="card-description">Register library staff members with appropriate access levels and role-based permissions.</p>
+        <button class="card-button">Go to Staff Form</button>
+      </div>
+
+      <!-- Add HOD -->
+      <div class="dashboard-card card-hod fade-in" onclick="location.href='/hod/create/'">
+        <div class="card-icon">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <h3 class="card-title">Add HOD</h3>
+        <p class="card-description">Register Head of Department with administrative privileges and department management capabilities.</p>
+        <button class="card-button">Go to HOD Form</button>
+      </div>
+
+      <!-- Delete Book Data -->
+      <div class="dashboard-card card-delete fade-in" onclick="location.href='/delete-login/'">
+        <div class="card-icon">
+          <i class="fas fa-trash-alt"></i>
+        </div>
+        <h3 class="card-title">Delete Book</h3>
+        <p class="card-description">Remove outdated or damaged books from the library system with proper archival and tracking.</p>
+        <button class="card-button">Delete Book</button>
+      </div>
+
+      <!-- Delete Student Data -->
+      <div class="dashboard-card card-delete fade-in" onclick="location.href='/deletes-stud/'">
+        <div class="card-icon">
+          <i class="fas fa-user-times"></i>
+        </div>
+        <h3 class="card-title">Delete Student</h3>
+        <p class="card-description">Remove student records when they are no longer active while maintaining data integrity.</p>
+        <button class="card-button">Delete Student</button>
+      </div>
+
+      <!-- Excel Upload Book -->
+      <div class="dashboard-card card-upload fade-in" onclick="location.href='/bulk_upload_books/'">
+        <div class="card-icon">
+          <i class="fas fa-file-excel"></i>
+        </div>
+        <h3 class="card-title">Upload Books (Excel)</h3>
+        <p class="card-description">Bulk upload new books into the system using Excel templates for efficient catalog management.</p>
+        <button class="card-button">Upload Books</button>
+      </div>
+
+      <!-- Excel Upload Student -->
+      <div class="dashboard-card card-upload fade-in" onclick="location.href='/bulk_upload_students/'">
+        <div class="card-icon">
+          <i class="fas fa-file-csv"></i>
+        </div>
+        <h3 class="card-title">Upload Students (Excel)</h3>
+        <p class="card-description">Bulk upload student records using formatted Excel files for rapid student onboarding.</p>
+        <button class="card-button">Upload Students</button>
+      </div>
+
+      <!-- Student Details -->
+      <div class="dashboard-card card-details fade-in" onclick="location.href='/search-borrow/'">
+        <div class="card-icon">
+          <i class="fas fa-id-card"></i>
+        </div>
+        <h3 class="card-title">Student Details</h3>
+        <p class="card-description">Search and view comprehensive student information, borrowing history, and account status.</p>
+        <button class="card-button">View Details</button>
+      </div>
+
+      <!-- Issue Details -->
+      <div class="dashboard-card card-issue fade-in" onclick="location.href='/report-issue/'">
+        <div class="card-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <h3 class="card-title">Issue Details</h3>
+        <p class="card-description">Track and resolve library-related issues, complaints, and maintenance requests efficiently.</p>
+        <button class="card-button">View Issues</button>
+      </div>
+
+      <!-- Purchase Requests -->
+      <div class="dashboard-card card-purchase fade-in" onclick="location.href='/purchase-requests/'">
+        <div class="card-icon">
+          <i class="fas fa-shopping-cart"></i>
+        </div>
+        <h3 class="card-title">Purchase Requests</h3>
+        <p class="card-description">Review and manage book purchase requests from staff with approval workflow and tracking.</p>
+        <button class="card-button">View Requests</button>
+      </div>
+
+      <!-- Barcode Generator -->
+      <div class="dashboard-card card-barcode fade-in" onclick="location.href='/generate-barcode/'">
+        <div class="card-icon">
+          <i class="fas fa-barcode"></i>
+        </div>
+        <h3 class="card-title">Barcode Generator</h3>
+        <p class="card-description">Create and print barcodes for new books and library materials with customizable formats.</p>
+        <button class="card-button">Generate Barcode</button>
+      </div>
+
+      <!-- Donation Book Card -->
+      <div class="dashboard-card card-donation fade-in" onclick="location.href='/donate-books/'">
+        <div class="card-icon">
+          <i class="fas fa-gift"></i>
+        </div>
+        <h3 class="card-title">Donation Book</h3>
+        <p class="card-description">Add books donated to the library collection with donor information and acknowledgment tracking.</p>
+        <button class="card-button">Donate Book</button>
+      </div>
+
+      <!-- View Donors Card -->
+      <div class="dashboard-card card-donors fade-in" onclick="location.href='/view-donors/'">
+        <div class="card-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3 class="card-title">View Donors</h3>
+        <p class="card-description">See who donated the books and their details with comprehensive donor management and reporting.</p>
+        <button class="card-button">View Donors</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Add fade-in animation to elements with delay
+    document.addEventListener('DOMContentLoaded', function() {
+      const fadeElements = document.querySelectorAll('.fade-in');
+      fadeElements.forEach((el, index) => {
+        el.style.animationDelay = `${index * 0.1}s`;
+      });
+    });
+  </script>
+</body>
+</html>

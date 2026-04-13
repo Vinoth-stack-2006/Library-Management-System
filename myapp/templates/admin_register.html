@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Admin</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #ff512f, #dd2476);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .register-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            width: 370px;
+            color: #fff;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .register-box h2 {
+            margin-bottom: 20px;
+            color: #f9f9f9;
+        }
+        .register-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+        .register-box input:focus {
+            border: 2px solid #ff6ec4;
+        }
+        .register-box button {
+            background: linear-gradient(to right, #ff6ec4, #7873f5);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        .register-box button:hover {
+            background: linear-gradient(to right, #7873f5, #ff6ec4);
+            transform: scale(1.05);
+        }
+        .register-box a {
+            display: block;
+            margin-top: 15px;
+            color: #ffccff;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .register-box a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        .messages p {
+            color: #ff4c4c;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-box">
+        <h2>🆕 Create Admin</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Enter username" required>
+            <input type="password" name="password" placeholder="Enter password" required>
+            <input type="password" name="confirm_password" placeholder="Confirm password" required>
+            <button type="submit">Register</button>
+        </form>
+        <div class="messages">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+        <a href="{% url 'super_login' %}">🔑 Already Admin? Login</a>
+    </div>
+</body>
+</html>

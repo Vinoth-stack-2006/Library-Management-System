@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #3498db;
+      --accent: #1abc9c;
+      --warning: #f39c12;
+      --info: #17a2b8;
+      --light-bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-dark: #2c3e50;
+      --text-light: #7f8c8d;
+      --border-light: #e9ecef;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+      min-height: 100vh;
+      color: var(--text-dark);
+      padding: 20px 0;
+    }
+
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .dashboard-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dashboard-header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" opacity="0.1"><path fill="white" d="M0,50 Q250,0 500,50 T1000,50 V100 H0 Z"/></svg>');
+      background-size: cover;
+      background-position: bottom;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      position: relative;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      min-height: 320px;
+    }
+
+    .dashboard-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--card-color), var(--card-color-light));
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .card-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      color: white;
+      background: linear-gradient(135deg, var(--card-color), var(--card-color-light));
+      transition: transform 0.3s ease;
+    }
+
+    .dashboard-card:hover .card-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .card-description {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .card-button {
+      width: 100%;
+      max-width: 200px;
+      font-weight: 500;
+      border-radius: 10px;
+      padding: 12px 24px;
+      transition: all 0.3s ease;
+      border: none;
+      background: var(--card-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .card-button:hover {
+      background: var(--card-color-light);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Card color variations */
+    .card-borrow { 
+      --card-color: var(--warning);
+      --card-color-light: #f4b350;
+    }
+    
+    .card-view { 
+      --card-color: var(--info);
+      --card-color-light: #2dc5e0;
+    }
+    
+    .card-add { 
+      --card-color: var(--primary);
+      --card-color-light: #3d5a80;
+    }
+    
+    .card-newspaper { 
+      --card-color: var(--accent);
+      --card-color-light: #48c9b0;
+    }
+
+    /* Stats Section */
+    .stats-section {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 3rem;
+      box-shadow: var(--shadow);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 1.5rem;
+      color: white;
+      background: linear-gradient(135deg, var(--secondary), var(--accent));
+    }
+
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-header {
+        padding: 2rem 1.5rem;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+      }
+      
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      
+      .dashboard-card {
+        padding: 2rem 1.5rem;
+        min-height: 300px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+      
+      .card-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .dashboard-container {
+        padding: 0 15px;
+      }
+      
+      .dashboard-header {
+        padding: 1.5rem 1rem;
+      }
+      
+      h1 {
+        font-size: 1.6rem;
+      }
+      
+      .dashboard-card {
+        padding: 1.5rem 1rem;
+        min-height: 280px;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .card-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.6rem;
+      }
+      
+      .card-title {
+        font-size: 1.2rem;
+      }
+      
+      .card-description {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Header Section -->
+    <div class="dashboard-header fade-in">
+      <h1><i class="fas fa-book-reader me-2"></i>Library Management Dashboard</h1>
+      <p class="subtitle">Streamline your library operations with our comprehensive management system</p>
+    </div>
+
+
+    <!-- Main Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Borrow & Return Book -->
+      <div class="dashboard-card card-borrow fade-in" onclick="location.href='/borrow-gate/'">
+        <div class="card-icon">
+          <i class="fas fa-exchange-alt"></i>
+        </div>
+        <h3 class="card-title">Borrow & Return</h3>
+        <p class="card-description">Efficiently manage book borrowing and return records with our streamlined tracking system and automated notifications.</p>
+        <button class="card-button">
+          <i class="fas fa-arrow-right me-2"></i>Get Started
+        </button>
+      </div>
+
+      <!-- View Books -->
+      <div class="dashboard-card card-view fade-in" onclick="location.href='/avabilable-gate/'">
+        <div class="card-icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h3 class="card-title">View Books</h3>
+        <p class="card-description">Browse our complete digital catalog with advanced search, filters, and detailed book information including availability status.</p>
+        <button class="card-button">
+          <i class="fas fa-search me-2"></i>Browse Catalog
+        </button>
+      </div>
+
+      <!-- Add Book -->
+      <div class="dashboard-card card-add fade-in" onclick="location.href='/gate-login/'">
+        <div class="card-icon">
+          <i class="fas fa-plus-circle"></i>
+        </div>
+        <h3 class="card-title">Add Book</h3>
+        <p class="card-description">Add new books to the library collection with comprehensive details, categorization, ISBN validation, and inventory tracking.</p>
+        <button class="card-button">
+          <i class="fas fa-plus me-2"></i>Add New Book
+        </button>
+      </div>
+
+      <!-- Newspaper Upload -->
+      <div class="dashboard-card card-newspaper fade-in" onclick="location.href='/newspaper-upload/'">
+        <div class="card-icon">
+          <i class="fas fa-newspaper"></i>
+        </div>
+        <h3 class="card-title">Newspaper Upload</h3>
+        <p class="card-description">Upload and archive digital newspapers in multiple languages with automatic categorization and easy retrieval system.</p>
+        <button class="card-button">
+          <i class="fas fa-upload me-2"></i>Upload Files
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Add fade-in animation to elements with delay
+    document.addEventListener('DOMContentLoaded', function() {
+      const fadeElements = document.querySelectorAll('.fade-in');
+      fadeElements.forEach((el, index) => {
+        el.style.animationDelay = `${index * 0.2}s`;
+      });
+
+      // Add smooth click animation to cards
+      document.querySelectorAll('.dashboard-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+          // Prevent multiple clicks
+          if (this.classList.contains('clicked')) return;
+          this.classList.add('clicked');
+          
+          // Add ripple effect
+          const ripple = document.createElement('div');
+          ripple.style.cssText = `
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+          `;
+          
+          const rect = this.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+          const x = e.clientX - rect.left - size / 2;
+          const y = e.clientY - rect.top - size / 2;
+          
+          ripple.style.width = ripple.style.height = `${size}px`;
+          ripple.style.left = `${x}px`;
+          ripple.style.top = `${y}px`;
+          
+          this.appendChild(ripple);
+          
+          // Navigate after animation
+          setTimeout(() => {
+            const url = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+            window.location.href = url;
+          }, 400);
+        });
+      });
+    });
+
+    // Add ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

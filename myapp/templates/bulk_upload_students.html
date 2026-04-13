@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Upload Books | Staff Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --light-blue: #3b82f6;
+            --soft-blue: #dbeafe;
+            --dark-blue: #1e40af;
+            --success: #10b981;
+            --background: #f8fafc;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .upload-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .upload-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
+            border: 1px solid #e2e8f0;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+        
+        .upload-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.15);
+        }
+        
+        .card-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+        
+        .header-icon {
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem auto;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .card-header h2 {
+            color: var(--dark-blue);
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+        
+        .card-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-blue);
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+        }
+        
+        .form-control {
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 2px dashed #cbd5e1;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            background: #f8fafc;
+            cursor: pointer;
+        }
+        
+        .form-control:hover {
+            border-color: var(--primary-blue);
+            background: #f0f9ff;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: white;
+            border-style: solid;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+        }
+        
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            background: #dbeafe;
+            color: var(--dark-blue);
+            border-left: 4px solid var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .file-info {
+            background: #f0f9ff;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+            border: 1px solid #e0f2fe;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+        
+        .file-info strong {
+            color: var(--dark-blue);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .button-group .btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 576px) {
+            .upload-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .card-header h2 {
+                font-size: 1.5rem;
+            }
+            
+            .header-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <div class="upload-card">
+            <!-- Header -->
+            <div class="card-header">
+                <div class="header-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h2>Bulk Upload Students</h2>
+                <div class="card-subtitle">Upload Excel/CSV file with book data</div>
+            </div>
+
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert">
+                        <i class="fas fa-info-circle"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Upload Form -->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- File Input -->
+                <div class="mb-4">
+                    <label class="form-label">Choose Excel/CSV File</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="file" class="form-control" required accept=".xlsx,.xls,.csv">
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-upload"></i>
+                        Upload File
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+            </form>
+            
+            <!-- File Information -->
+            <div class="file-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <div>
+                    <strong>Supported formats:</strong> Excel (.xlsx, .xls) and CSV files<br>
+                    <strong>File requirements:</strong> Maximum file size 10MB<br>
+                    <strong>Required columns:</strong> ISBN, Title, Author, Category
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

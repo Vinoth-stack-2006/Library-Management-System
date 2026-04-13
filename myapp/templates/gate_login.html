@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-light: #4895ef;
+      --secondary: #3f37c9;
+      --dark: #2b2d42;
+      --light: #f8f9fa;
+      --success: #4cc9f0;
+      --border-radius: 12px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+    }
+    
+    .login-container {
+      max-width: 420px;
+      width: 100%;
+    }
+    
+    .login-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .login-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+    }
+    
+    .card-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      text-align: center;
+      padding: 30px 20px;
+      border-bottom: none;
+    }
+    
+    .card-header h2 {
+      font-weight: 700;
+      margin-bottom: 5px;
+      font-size: 1.8rem;
+    }
+    
+    .card-header p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+    
+    .card-body {
+      padding: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    
+    .form-label {
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 8px;
+      display: block;
+    }
+    
+    .input-group {
+      position: relative;
+    }
+    
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+      z-index: 5;
+    }
+    
+    .form-control {
+      border-radius: 8px;
+      padding: 12px 15px 12px 45px;
+      border: 1.5px solid #e1e5ee;
+      transition: all 0.3s;
+      font-size: 1rem;
+      height: 48px;
+    }
+    
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+    }
+    
+    .btn-login {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border: none;
+      color: white;
+      padding: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: all 0.3s;
+      width: 100%;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      margin-top: 10px;
+    }
+    
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 14px rgba(67, 97, 238, 0.25);
+    }
+    
+    .options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 1.5rem 0;
+    }
+    
+    .form-check-input:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    .forgot-password {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .forgot-password:hover {
+      color: var(--secondary);
+      text-decoration: underline;
+    }
+    
+    .divider {
+      text-align: center;
+      margin: 1.5rem 0;
+      position: relative;
+      color: #6c757d;
+    }
+    
+    .divider::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: #e1e5ee;
+      z-index: 1;
+    }
+    
+    .divider span {
+      background: white;
+      padding: 0 15px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .social-login {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .social-btn {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      transition: all 0.3s;
+    }
+    
+    .social-btn:hover {
+      transform: translateY(-3px);
+    }
+    
+    .google {
+      background: #DB4437;
+    }
+    
+    .facebook {
+      background: #4267B2;
+    }
+    
+    .twitter {
+      background: #1DA1F2;
+    }
+    
+    .signup-link {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #6c757d;
+    }
+    
+    .signup-link a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .signup-link a:hover {
+      color: var(--secondary);
+      text-decoration: underline;
+    }
+    
+    .alert {
+      border-radius: 8px;
+      border: none;
+      padding: 12px 15px;
+    }
+    
+    .features {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 25px;
+      text-align: center;
+    }
+    
+    .feature {
+      flex: 1;
+      padding: 0 10px;
+    }
+    
+    .feature i {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    
+    .feature p {
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+    
+    @media (max-width: 576px) {
+      .card-body {
+        padding: 25px 20px;
+      }
+      
+      .options {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      
+      .features {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-card">
+      <!-- Header -->
+      <div class="card-header">
+        <h2><i class="fas fa-book-open me-2"></i>Admin Login</h2>
+        <p>Access your digital library</p>
+      </div>
+
+      <!-- Body -->
+      <div class="card-body">
+        <!-- Error Message (if any) -->
+        <div class="alert alert-danger d-none" role="alert">
+          <i class="fas fa-exclamation-circle me-2"></i>Invalid username or password. Please try again.
+        </div>
+
+        <!-- Login Form -->
+        <form method="post" action="{% url 'gate_login' %}">
+          {% csrf_token %}
+
+          <!-- Username -->
+          <div class="form-group">
+            <label for="username" class="form-label">Username</label>
+            <div class="input-group">
+              <i class="fas fa-user input-icon"></i>
+              <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-group">
+              <i class="fas fa-lock input-icon"></i>
+              <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+            </div>
+          </div>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="options">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">
+                Remember me
+              </label>
+            </div>
+            <a href="#" class="forgot-password">Forgot password?</a>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn-login">
+            <i class="fas fa-sign-in-alt me-2"></i>Login to Your Account
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider">
+          <span>Or continue with</span>
+        </div>
+
+        <!-- Social Login -->
+        <div class="social-login">
+          <a href="#" class="social-btn google">
+            <i class="fab fa-google"></i>
+          </a>
+          <a href="#" class="social-btn facebook">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" class="social-btn twitter">
+            <i class="fab fa-twitter"></i>
+          </a>
+        </div>
+
+        <!-- Sign Up Link -->
+        <div class="signup-link">
+          Don't have an account? <a href="#">Sign up now</a>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+          <div class="feature">
+            <i class="fas fa-book"></i>
+            <p>10k+ Books</p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-bookmark"></i>
+            <p>Save Favorites</p>
+          </div>
+          <div class="feature">
+            <i class="fas fa-mobile-alt"></i>
+            <p>Any Device</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Simple animation on load
+    document.addEventListener('DOMContentLoaded', function() {
+      const loginCard = document.querySelector('.login-card');
+      loginCard.style.opacity = '0';
+      loginCard.style.transform = 'translateY(20px)';
+      
+      setTimeout(() => {
+        loginCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        loginCard.style.opacity = '1';
+        loginCard.style.transform = 'translateY(0)';
+      }, 100);
+      
+      // Example of showing error message (for demo purposes)
+      // Uncomment the line below to see the error message
+      // document.querySelector('.alert').classList.remove('d-none');
+    });
+  </script>
+</body>
+</html>

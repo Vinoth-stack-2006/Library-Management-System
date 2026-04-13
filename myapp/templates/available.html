@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Available Books - Library Management System</title>
+
+  <!-- CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.datatables.net/buttons/3.2.5/css/buttons.dataTables.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #3498db;
+      --accent: #1abc9c;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --light-bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-dark: #2c3e50;
+      --text-light: #7f8c8d;
+      --border-light: #e9ecef;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--text-dark);
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .page-header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 0;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      border-bottom: none;
+      padding: 1.5rem 2rem;
+    }
+
+    .card-header h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-body {
+      padding: 2rem;
+    }
+
+    /* DataTable Styling */
+    #example {
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    #example thead th {
+      background: var(--light-bg);
+      color: var(--primary);
+      font-weight: 600;
+      border-bottom: 2px solid var(--border-light);
+      padding: 1rem 0.75rem;
+    }
+
+    #example tbody td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: middle;
+    }
+
+    #example tbody tr {
+      transition: all 0.3s ease;
+    }
+
+    #example tbody tr:hover {
+      background: rgba(52, 152, 219, 0.05);
+      transform: translateX(5px);
+    }
+
+    .btn {
+      border-radius: 8px;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .btn-outline-primary {
+      color: var(--secondary);
+      border: 1px solid var(--secondary);
+      background: transparent;
+    }
+
+    .btn-outline-primary:hover {
+      background: var(--secondary);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .badge {
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 500;
+      font-size: 0.85rem;
+    }
+
+    .badge-success {
+      background: rgba(39, 174, 96, 0.15);
+      color: var(--success);
+    }
+
+    .badge-danger {
+      background: rgba(231, 76, 60, 0.15);
+      color: var(--danger);
+    }
+
+    /* Modal Styling */
+    .modal-content {
+      border-radius: 16px;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      border-bottom: none;
+      padding: 1.5rem 2rem;
+    }
+
+    .modal-title {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-body {
+      padding: 2rem;
+      line-height: 1.6;
+      outline: none; /* for focus */
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    .btn-close {
+      filter: invert(1);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .page-header {
+        padding: 2rem 1.5rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      .modal-dialog {
+        width: 90% !important;
+        margin: 1rem auto !important;
+      }
+
+      .modal-content {
+        max-height: 80vh !important;
+        overflow-y: auto !important;
+      }
+
+      #abstractModalBody {
+        padding: 1.5rem !important;
+        overflow-y: auto !important;
+        word-wrap: break-word !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Page Header -->
+    <div class="page-header fade-in">
+      <h1><i class="fas fa-book-open"></i> Available Books</h1>
+      <p>Browse and manage the complete collection of library books</p>
+    </div>
+
+    <!-- Books Table -->
+    <div class="card fade-in">
+      <div class="card-header">
+        <h3><i class="fas fa-table"></i> Books Catalog</h3>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table
+            id="example"
+            class="display nowrap table table-hover"
+            style="width: 100%"
+          >
+            <thead>
+              <tr>
+                <th>Scanner ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Year</th>
+                <th>Publisher</th>
+                <th>Department</th>
+                <th>Abstract</th>
+                <th>Available</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for book in books %}
+              <tr>
+                <td><strong>{{ book.scanner }}</strong></td>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.year }}</td>
+                <td>{{ book.publisher }}</td>
+                <td>
+                  <span class="badge bg-light text-dark">{{ book.department }}</span>
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary view-abstract-btn"
+                    data-url="{% url 'book_abstract' book.pk %}"
+                  >
+                    <i class="fas fa-eye me-1"></i> View Abstract
+                  </button>
+                </td>
+                <td>
+                  {% if book.is_currently_available %}
+                  <span class="badge badge-success">Available</span>
+                  {% else %}
+                  <span class="badge badge-danger">Borrowed</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="8" class="text-center text-muted py-4">
+                  <i class="fas fa-book fa-2x mb-3 d-block"></i>
+                  No books available in the catalog.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abstract Modal -->
+  <div
+    class="modal fade"
+    id="abstractModal"
+    tabindex="-1"
+    aria-labelledby="abstractModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="abstractModalLabel">
+            <i class="fas fa-file-alt me-2"></i> Book Abstract
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body" id="abstractModalBody" tabindex="-1">
+          <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading abstract...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/dataTables.buttons.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.dataTables.js"></script>
+  <script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.print.min.js"></script>
+
+  <script>
+    // Initialize DataTable
+    const dataTable = new DataTable('#example', {
+      responsive: true,
+      layout: {
+        topStart: {
+          buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+        },
+      },
+      language: {
+        search: 'Search books:',
+        lengthMenu: 'Show MENU entries',
+      },
+    });
+
+
+  // Other DataTable initialization code...
+
+  // Replace your old abstract modal handler with this!
+  $(document).on('click', '.view-abstract-btn', async function () {
+    const modalEl = document.getElementById('abstractModal');
+    const modalBody = document.getElementById('abstractModalBody');
+    const bsModal = new bootstrap.Modal(modalEl);
+
+    const url = this.dataset.url;
+    modalBody.innerHTML = `
+      <div class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading abstract...</p>
+      </div>
+    `;
+    bsModal.show();
+
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { Accept: 'application/json' }
+      });
+      if (!res.ok) throw new Error('Failed to load abstract');
+      const data = await res.json();
+      modalBody.innerHTML = data.html || '<p class="text-muted">No abstract available.</p>';
+    } catch (err) {
+      modalBody.innerHTML = `
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Failed to load abstract: ${err.message}
+        </div>
+      `;
+    }
+  });
+
+  // Keep your modal scroll/focus fixes
+  const modalEl = document.getElementById('abstractModal');
+  modalEl.addEventListener('shown.bs.modal', () => {
+    document.body.style.overflow = 'hidden';
+    const modalBody = modalEl.querySelector('.modal-body');
+    if (modalBody) modalBody.focus();
+  });
+  modalEl.addEventListener('hidden.bs.modal', () => {
+    document.body.style.overflow = '';
+  });
+</script>
+
+</body>
+</html>
