@@ -1,2 +1,1 @@
-
-web: gunicorn pr1.wsgi:application
+web: gunicorn pr1.pr1.wsgi:application
