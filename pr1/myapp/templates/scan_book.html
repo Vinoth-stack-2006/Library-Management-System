@@ -2,101 +2,582 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Book - Internal Barcode Scanner</title>
+    <title>Add Book - Professional Barcode Scanner</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #1abc9c;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --border-light: #e9ecef;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+        }
+        
+        .card {
+            border-radius: 16px;
+            border: none;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), #3d5a80);
+            color: white;
+            padding: 25px 30px;
+            border-bottom: none;
+        }
+        
+        .card-body {
+            padding: 30px;
+        }
+        
+        h2 {
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            border-color: var(--secondary);
+        }
+        
+        .btn {
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary), #5dade2);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .scanner-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-light);
+        }
+        
+        #camera {
+            width: 100%;
+            height: 300px;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 0 auto;
+            position: relative;
+            touch-action: pan-y;
+        }
+        
+        #camera video,
+        #camera canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover;
+        }
+        
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .scanner-frame {
+            width: 80%;
+            height: 60%;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .scanner-frame::before,
+        .scanner-frame::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-color: white;
+            border-style: solid;
+        }
+        
+        .scanner-frame::before {
+            top: -2px;
+            left: -2px;
+            border-width: 3px 0 0 3px;
+            border-radius: 8px 0 0 0;
+        }
+        
+        .scanner-frame::after {
+            bottom: -2px;
+            right: -2px;
+            border-width: 0 3px 3px 0;
+            border-radius: 0 0 8px 0;
+        }
+        
+        .scanner-status {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .camera-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .swipe-hint {
+            position: absolute;
+            bottom: 35px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+            z-index: 10;
+        }
+        
+        .scanner-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .scanner-controls button {
+            border-radius: 6px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        
+        .input-group-text {
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-light);
+        }
+        
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            z-index: 1050;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        
+        .success-indicator {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            color: #155724;
+        }
+        
+        .flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            opacity: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .flash-active {
+            animation: flash 0.3s;
+        }
+        
+        @keyframes flash {
+            0% { opacity: 0; }
+            50% { opacity: 0.7; }
+            100% { opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            body {
+                padding: 15px;
+            }
+            
+            .card-body {
+                padding: 15px;
+            }
+            
+            .scanner-controls {
+                flex-direction: column;
+            }
+            
+            #camera {
+                height: 250px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-light">
-
-<!-- Center aligned message container -->
-<div class="position-fixed top-0 start-50 translate-middle-x mt-3 w-auto" style="z-index: 1050; max-width: 600px;">
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center shadow rounded" role="alert" style="font-weight: 600;">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    {% endfor %}
-  {% endif %}
-</div>
-
-
-    <div class="d-flex justify-content-center align-items-center vh-100">
-        <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%;">
-            <h2 class="text-center mb-4">📚 Add New Book</h2>
-
-            <form method="post" id="bookForm">
-                {% csrf_token %}
-
-                <!-- Barcode Result (manual typing allowed) -->
-                <div class="mb-3">
-                    <label class="form-label">Scanned Book Barcode (or type manually)</label>
-                    <input type="text" name="scanner" id="scannerInput" class="form-control" required>
+<body>
+    <!-- Center aligned message container -->
+    <div class="alert-container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert" style="font-weight: 600;">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+            {% endfor %}
+        {% endif %}
+    </div>
 
-                <!-- Camera Preview -->
-                <div id="camera" class="mb-3 border rounded" style="width:100%; height:300px;"></div>
-
-                <!-- Book Title -->
-                <div class="mb-3">
-                    <input type="text" name="title" id="titleInput" class="form-control" placeholder="Book Name" required>
-                </div>
-
-                <!-- Buttons -->
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary w-50">➕ Add Book</button>
-                </div>
-            </form>
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card w-100">
+            <div class="card-header text-center">
+                <h2><i class="fas fa-book me-2"></i>Scan Book ID</h2>
+                <p class="mb-0 mt-2 opacity-75">Register book with barcode scanning capability</p>
+            </div>
+            
+            <div class="card-body">
+                <form method="post" id="bookForm">
+                    {% csrf_token %}
+                    
+                    <!-- Scanner Section -->
+                    <div class="scanner-container">
+                        <label class="form-label d-block text-center mb-3">
+                            <i class="fas fa-barcode me-2"></i>Book Barcode Scanner
+                        </label>
+                        
+                        <div id="camera">
+                            <div class="scanner-overlay">
+                                <div class="scanner-frame"></div>
+                            </div>
+                            <div class="camera-indicator">
+                                <span id="cameraIcon">📷</span>
+                                <span id="cameraType">Rear Camera</span>
+                            </div>
+                            <div class="swipe-hint">Swipe left/right to switch camera</div>
+                            <div class="scanner-status">
+                                <span id="scannerStatus">Initializing camera...</span>
+                            </div>
+                            <div class="flash" id="flashEffect"></div>
+                        </div>
+                        
+                        <div class="scanner-controls">
+                            <button type="button" id="startScanner" class="btn btn-primary">
+                                <i class="fas fa-play me-1"></i> Start Scanner
+                            </button>
+                            <button type="button" id="stopScanner" class="btn btn-secondary" disabled>
+                                <i class="fas fa-stop me-1"></i> Stop Scanner
+                            </button>
+                            <button type="button" id="switchCamera" class="btn btn-outline-primary">
+                                <i class="fas fa-sync-alt me-1"></i> Switch Camera
+                            </button>
+                        </div>
+                        
+                        <small class="text-muted d-block text-center mt-3">
+                            <i class="fas fa-info-circle me-1"></i> Position the book barcode within the frame
+                        </small>
+                    </div>
+                    
+                    <!-- Form Fields -->
+                    <div class="mb-3">
+                        <label class="form-label">Scanned Book Barcode</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                            <input type="text" name="scanner" id="scannerInput" class="form-control" placeholder="Scan or enter barcode manually" required>
+                        </div>
+                        <div id="successIndicator" class="success-indicator">
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span>Barcode successfully scanned!</span>
+                        </div>
+                        <small class="text-muted">This field will be automatically populated when a barcode is scanned</small>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label">Book Title</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-book"></i></span>
+                            <input type="text" name="title" id="titleInput" class="form-control" placeholder="Enter book title" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="d-flex justify-content-center mt-4">
+                        <button type="submit" class="btn btn-success px-4">
+                            <i class="fas fa-plus-circle me-1"></i> Add Book
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    if (navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === "function") {
-        Quagga.init({
-            inputStream: {
-                type: "LiveStream",
-                target: document.querySelector('#camera'),
-                constraints: { width: 400, height: 300, facingMode: "environment" }
-            },
-            decoder: { readers: ["code_128_reader", "code_39_reader"] },
-            locate: true,
-            numOfWorkers: navigator.hardwareConcurrency || 2,
-            frequency: 10
-        }, function(err) {
-            if (err) { console.error("Quagga init error:", err); return; }
-            Quagga.start();
-        });
-
-        let lastResult = null;
-        Quagga.onDetected(function(result) {
-            if (!result || !result.codeResult) return;
-            let code = result.codeResult.code;
-            if (code && code !== lastResult) {
-                let scannerElem = document.getElementById("scannerInput");
-                let wasEmpty = scannerElem.value === "";
-                scannerElem.value = code;
-                lastResult = code;
-                console.log("Scanned:", code);
-                if (wasEmpty) {
-                    document.getElementById("titleInput").focus();
-                }
+        document.addEventListener("DOMContentLoaded", function () {
+            const startBtn = document.getElementById('startScanner');
+            const stopBtn = document.getElementById('stopScanner');
+            const switchCameraBtn = document.getElementById('switchCamera');
+            const scannerStatus = document.getElementById('scannerStatus');
+            const scannerInput = document.getElementById('scannerInput');
+            const titleInput = document.getElementById('titleInput');
+            const successIndicator = document.getElementById('successIndicator');
+            const cameraType = document.getElementById('cameraType');
+            const cameraIcon = document.getElementById('cameraIcon');
+            const flashEffect = document.getElementById('flashEffect');
+            
+            let lastResult = null;
+            let isScannerActive = false;
+            let currentCamera = "environment"; // Default to rear camera
+            let isSwitching = false;
+            let startX = 0;
+            
+            function updateScannerStatus(message, isError = false) {
+                scannerStatus.textContent = message;
+                scannerStatus.style.color = isError ? '#e74c3c' : 'white';
             }
+            
+            function startScanner() {
+                if (isScannerActive) return;
+                
+                Quagga.init({
+                    inputStream: {
+                        type: "LiveStream",
+                        target: document.querySelector('#camera'),
+                        constraints: {
+                            width: { min: 640 },
+                            height: { min: 480 },
+                            facingMode: currentCamera,
+                            aspectRatio: { ideal: 1.333 }
+                        }
+                    },
+                    decoder: {
+                        readers: ["code_128_reader", "code_39_reader"],
+                    },
+                    locator: {
+                        patchSize: "medium",
+                        halfSample: true
+                    },
+                    locate: true
+                }, function(err) {
+                    if (err) {
+                        console.error("Quagga init error:", err);
+                        updateScannerStatus("Camera initialization failed", true);
+                        alert("Camera initialization failed. Please allow camera permissions and try again.");
+                        return;
+                    }
+                    
+                    Quagga.start();
+                    isScannerActive = true;
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                    updateScannerStatus("Scanner active - looking for barcodes");
+                });
+            }
+            
+            function stopScanner() {
+                if (!isScannerActive) return;
+                
+                Quagga.stop();
+                isScannerActive = false;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                updateScannerStatus("Scanner stopped");
+            }
+            
+            function switchCamera() {
+                if (isSwitching) return;
+                
+                isSwitching = true;
+                stopScanner();
+                
+                // Toggle between front and back camera
+                currentCamera = currentCamera === "environment" ? "user" : "environment";
+                
+                // Update camera indicator
+                if (currentCamera === "environment") {
+                    cameraType.textContent = "Rear Camera";
+                    cameraIcon.textContent = "📷";
+                } else {
+                    cameraType.textContent = "Front Camera";
+                    cameraIcon.textContent = "📱";
+                }
+                
+                // Restart scanner with new camera
+                setTimeout(() => {
+                    startScanner();
+                    isSwitching = false;
+                }, 500);
+            }
+            
+            // Touch events for swipe detection
+            const cameraElement = document.getElementById('camera');
+            cameraElement.addEventListener('touchstart', function(e) {
+                startX = e.touches[0].clientX;
+            }, false);
+            
+            cameraElement.addEventListener('touchend', function(e) {
+                if (!startX) return;
+                
+                const endX = e.changedTouches[0].clientX;
+                const diffX = startX - endX;
+                
+                // If horizontal swipe with sufficient distance
+                if (Math.abs(diffX) > 50) {
+                    switchCamera();
+                }
+                
+                startX = 0;
+            }, false);
+            
+            // Double-click to switch camera (for non-touch devices)
+            cameraElement.addEventListener('click', function(e) {
+                if (e.detail === 2) {
+                    switchCamera();
+                }
+            }, false);
+            
+            Quagga.onDetected(function(result) {
+                let code = result.codeResult.code;
+                if (code && code !== lastResult) {
+                    lastResult = code;
+                    scannerInput.value = code;
+                    
+                    // Visual feedback
+                    scannerInput.style.backgroundColor = '#d4edda';
+                    successIndicator.style.display = 'flex';
+                    flashEffect.classList.add('flash-active');
+                    
+                    setTimeout(() => {
+                        scannerInput.style.backgroundColor = '';
+                        successIndicator.style.display = 'none';
+                        flashEffect.classList.remove('flash-active');
+                    }, 3000);
+                    
+                    updateScannerStatus("Barcode detected: " + code);
+                    
+                    // Auto-focus to title field after scan
+                    setTimeout(() => {
+                        titleInput.focus();
+                    }, 500);
+                }
+            });
+            
+            // Event listeners
+            startBtn.addEventListener('click', startScanner);
+            stopBtn.addEventListener('click', stopScanner);
+            switchCameraBtn.addEventListener('click', switchCamera);
+            
+            // Auto-start scanner on page load
+            setTimeout(startScanner, 500);
+            
+            // Prevent Enter from submitting early
+            document.querySelectorAll("#bookForm input").forEach(input => {
+                input.addEventListener("keydown", function(e) {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        const focusable = Array.from(document.querySelectorAll("#bookForm input"));
+                        const index = focusable.indexOf(this);
+                        if (index > -1 && index + 1 < focusable.length) {
+                            focusable[index + 1].focus();
+                        }
+                    }
+                });
+            });
         });
-    } else {
-        alert("Camera not supported or permission denied.");
-    }
-
-    // Move focus to titleInput on Enter in scannerInput
-    document.getElementById("scannerInput").addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            document.getElementById("titleInput").focus();
-        }
-    });
-});
-
     </script>
-
 </body>
 </html>

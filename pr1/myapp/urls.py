@@ -68,6 +68,9 @@ urlpatterns = [
     path("hod/list/", views.hod_list, name="hod_list"),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('reset-password/<uidb64>/<token>/', views.reset_password, name='reset_password'),
+    path('donate-books/', views.donate_book, name='donate-books'),
+    path('donation-details/', views.donation_details, name='donation-details'),
+    path('view-donors/', views.view_donors, name='view_donors'),
 
 ]
 

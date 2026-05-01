@@ -2,21 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Student (Scanner Integrated)</title>
+    <title>Library ID Scanner</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
         #camera {
             width: 100%;
             max-width: 700px;
             height: 400px;
             background-color: #000;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             margin: 0 auto;
             position: relative;
+            touch-action: pan-y;
         }
+        
         #camera video,
         #camera canvas {
             position: absolute;
@@ -26,41 +39,182 @@
             height: 100% !important;
             object-fit: cover;
         }
+        
+        .camera-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .swipe-hint {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 10px;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+        }
+        
+        .camera-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .btn-camera {
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .scanner-status {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .status-active {
+            color: #28a745;
+            font-weight: 500;
+        }
+        
+        .status-inactive {
+            color: #dc3545;
+        }
+        
+        .flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            opacity: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .flash-active {
+            animation: flash 0.3s;
+        }
+        
+        @keyframes flash {
+            0% { opacity: 0; }
+            50% { opacity: 0.7; }
+            100% { opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            #camera {
+                height: 300px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                margin: 10px 0;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            #camera {
+                height: 250px;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .camera-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-camera {
+                width: 80%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body class="bg-light">
 
-<div class="container my-5">
+<div class="container my-4">
     <div class="card shadow-lg p-4">
-        <h2 class="mb-4 text-center text-primary">👨‍🎓 Add New Student</h2>
+        <h2 class="mb-4 text-center text-primary">📚 Borrow & Return Books - Scan Your ID</h2>
 
         <form method="post">
             {% csrf_token %}
 
-            <!-- Scanner -->
+            <!-- Scanner Section -->
             <div class="text-center mb-3">
                 <label class="form-label fw-bold d-block mb-2">Live Barcode Scanner</label>
+                
                 <div id="camera">
-                    <span class="text-white">📷 Initializing camera...</span>
+                    <span class="text-white position-absolute top-50 start-50 translate-middle">📷 Initializing camera...</span>
+                    <div class="camera-indicator">
+                        <span id="cameraIcon">📷</span>
+                        <span id="cameraType">Rear Camera</span>
+                    </div>
+                    <div class="swipe-hint">Swipe left/right to switch camera</div>
+                    <div class="flash" id="flashEffect"></div>
                 </div>
+                
+                <div class="scanner-status">
+                    <span id="scannerStatus" class="status-active">Scanner active</span>
+                </div>
+                
+                <div class="camera-controls">
+                    <button type="button" class="btn btn-outline-primary btn-camera" id="switchCameraBtn">
+                        <span>🔄 Switch Camera</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-camera" id="toggleScannerBtn">
+                        <span>⏸️ Pause Scanner</span>
+                    </button>
+                </div>
+                
                 <small class="text-muted d-block mt-2">Scan the Student ID barcode or type it manually</small>
             </div>
 
-            <!-- Student ID (now editable) -->
+            <!-- Student ID Input -->
             <div class="mb-3">
-                <label class="form-label">Student ID</label>
+                <label class="form-label"> ID</label>
                 <input type="text" name="student_id" id="scannerInput" class="form-control" required>
+                <div class="form-text">Scanned ID will appear here automatically</div>
             </div>
 
-            <!-- Student Name -->
+            <!-- Student Name Input -->
             <div class="mb-3">
-                <label class="form-label">Student Name</label>
-                <input type="text" name="student_name" id="nameInput" class="form-control" placeholder="Enter student name" required>
+                <label class="form-label"> Name</label>
+                <input type="text" name="student_name" id="nameInput" class="form-control" placeholder="Enter Your Name" required>
             </div>
 
             <!-- Submit Button -->
             <div class="d-flex justify-content-between mt-4">
-                <button type="submit" class="btn btn-success px-4">💾 Submit & Continue</button>
+                <button type="submit" class="btn btn-success px-4">
+                    <span>💾 Submit & Continue</span>
+                </button>
             </div>
 
             {% if error %}
@@ -73,37 +227,159 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     let lastResult = null;
-
-    // Initialize Quagga for live scanning
-    Quagga.init({
-        inputStream: {
-            type: "LiveStream",
-            target: document.querySelector('#camera'),
-            constraints: {
-                width: { min: 640 },
-                height: { min: 480 },
-                facingMode: "environment",
-                aspectRatio: { ideal: 1.333 }
-            }
-        },
-        decoder: { readers: ["code_128_reader", "code_39_reader"] },
-        locator: { patchSize: "medium", halfSample: true },
-        locate: true
-    }, function(err) {
-        if (err) {
-            console.error("Quagga init error:", err);
-            alert("Camera initialization failed. Please allow camera permissions.");
-            return;
+    let currentCamera = "environment"; // Default to rear camera
+    let isSwitching = false;
+    let scannerActive = true;
+    let startX = 0;
+    
+    const cameraElement = document.getElementById('camera');
+    const cameraTypeElement = document.getElementById('cameraType');
+    const cameraIconElement = document.getElementById('cameraIcon');
+    const scannerStatusElement = document.getElementById('scannerStatus');
+    const switchCameraBtn = document.getElementById('switchCameraBtn');
+    const toggleScannerBtn = document.getElementById('toggleScannerBtn');
+    const flashEffect = document.getElementById('flashEffect');
+    
+    // Initialize Quagga with the current camera
+    function initScanner(cameraMode) {
+        if (isSwitching) return;
+        isSwitching = true;
+        
+        // Update scanner status
+        scannerStatusElement.textContent = "Initializing camera...";
+        scannerStatusElement.className = "status-inactive";
+        
+        // Stop any existing scanner
+        if (typeof Quagga !== 'undefined' && Quagga.initialized) {
+            Quagga.stop();
         }
-        Quagga.start();
-    });
-
-    // On code detected, fill the input
+        
+        // Update camera indicator
+        if (cameraMode === "environment") {
+            cameraTypeElement.textContent = "Rear Camera";
+            cameraIconElement.textContent = "📷";
+        } else {
+            cameraTypeElement.textContent = "Front Camera";
+            cameraIconElement.textContent = "📱";
+        }
+        
+        Quagga.init({
+            inputStream: {
+                type: "LiveStream",
+                target: cameraElement,
+                constraints: {
+                    width: { min: 640 },
+                    height: { min: 480 },
+                    facingMode: cameraMode,
+                    aspectRatio: { ideal: 1.333 }
+                }
+            },
+            decoder: {
+                readers: ["code_128_reader", "code_39_reader"],
+            },
+            locator: {
+                patchSize: "medium",
+                halfSample: true
+            },
+            locate: true
+        }, function(err) {
+            isSwitching = false;
+            if (err) {
+                console.error("Quagga init error:", err);
+                scannerStatusElement.textContent = "Camera initialization failed";
+                scannerStatusElement.className = "status-inactive";
+                alert("Camera initialization failed. Please allow camera permissions and ensure your device has a camera.");
+                return;
+            }
+            
+            if (scannerActive) {
+                Quagga.start();
+                scannerStatusElement.textContent = "Scanner active";
+                scannerStatusElement.className = "status-active";
+            } else {
+                scannerStatusElement.textContent = "Scanner paused";
+                scannerStatusElement.className = "status-inactive";
+            }
+        });
+    }
+    
+    // Switch camera function
+    function switchCamera() {
+        currentCamera = currentCamera === "environment" ? "user" : "environment";
+        initScanner(currentCamera);
+    }
+    
+    // Toggle scanner on/off
+    function toggleScanner() {
+        scannerActive = !scannerActive;
+        
+        if (scannerActive) {
+            if (Quagga.initialized) {
+                Quagga.start();
+                scannerStatusElement.textContent = "Scanner active";
+                scannerStatusElement.className = "status-active";
+                toggleScannerBtn.innerHTML = '<span>⏸️ Pause Scanner</span>';
+            }
+        } else {
+            if (Quagga.initialized) {
+                Quagga.stop();
+                scannerStatusElement.textContent = "Scanner paused";
+                scannerStatusElement.className = "status-inactive";
+                toggleScannerBtn.innerHTML = '<span>▶️ Resume Scanner</span>';
+            }
+        }
+    }
+    
+    // Touch events for swipe detection
+    cameraElement.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+    }, false);
+    
+    cameraElement.addEventListener('touchend', function(e) {
+        if (!startX) return;
+        
+        const endX = e.changedTouches[0].clientX;
+        const diffX = startX - endX;
+        
+        // If horizontal swipe with sufficient distance
+        if (Math.abs(diffX) > 50) {
+            switchCamera();
+        }
+        
+        startX = 0;
+    }, false);
+    
+    // Click event for camera switching (fallback for non-touch devices)
+    cameraElement.addEventListener('click', function(e) {
+        // Only trigger if not already switching and if it's a double click
+        if (!isSwitching && e.detail === 2) {
+            switchCamera();
+        }
+    }, false);
+    
+    // Button event listeners
+    switchCameraBtn.addEventListener('click', switchCamera);
+    toggleScannerBtn.addEventListener('click', toggleScanner);
+    
+    // Initialize with default camera
+    initScanner(currentCamera);
+    
+    // Barcode detection
     Quagga.onDetected(function(result) {
+        if (!scannerActive) return;
+        
         let code = result.codeResult.code;
         if (code && code !== lastResult) {
             lastResult = code;
             document.getElementById("scannerInput").value = code;
+            
+            // Add flash effect for visual feedback
+            flashEffect.classList.add('flash-active');
+            setTimeout(() => {
+                flashEffect.classList.remove('flash-active');
+            }, 300);
+            
+            // Auto-focus on name field
             document.getElementById("nameInput").focus();
         }
     });
@@ -113,6 +389,16 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.key === "Enter") {
             event.preventDefault();
             document.getElementById("nameInput").focus();
+        }
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (typeof Quagga !== 'undefined' && Quagga.initialized) {
+            Quagga.stop();
+            setTimeout(() => {
+                initScanner(currentCamera);
+            }, 300);
         }
     });
 });

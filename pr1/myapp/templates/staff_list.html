@@ -3,35 +3,147 @@
 <head>
     <title>Staff List</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f9fafb; padding: 30px; }
+        :root {
+            --primary-blue: #4f46e5;
+            --light-blue: #e0e7ff;
+            --medium-blue: #818cf8;
+            --dark-blue: #3730a3;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --bg-light: #f9fafb;
+            --white: #ffffff;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%);
+            padding: 40px 20px;
+            margin: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            color: var(--dark-blue);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
         table {
-            border-collapse: collapse; width: 80%; margin: auto;
-            background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-collapse: collapse; 
+            width: 100%; 
+            margin: auto;
+            background: var(--white); 
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
         }
+        
         th, td {
-            border: 1px solid #ddd; padding: 10px; text-align: left;
+            padding: 16px 20px; 
+            text-align: left;
         }
-        th { background: #4f46e5; color: white; }
-        tr:nth-child(even) { background: #f3f4f6; }
+        
+        th { 
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue)); 
+            color: var(--white); 
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            border-bottom: 1px solid var(--light-blue);
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        tr:nth-child(even) { 
+            background: var(--light-blue); 
+        }
+        
+        tr:hover {
+            background: rgba(79, 70, 229, 0.05);
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-light);
+            font-style: italic;
+        }
+        
+        .staff-id {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            th, td {
+                padding: 12px 15px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h2 style="text-align:center;">Staff List</h2>
-    <table>
-        <tr>
-            <th>Staff ID</th>
-            <th>Name</th>
-            <th>Email</th>
-        </tr>
-        {% for staff in staffs %}
-        <tr>
-            <td>{{ staff.staff_id }}</td>
-            <td>{{ staff.name }}</td>
-            <td>{{ staff.email }}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="3">No staff available</td></tr>
-        {% endfor %}
-    </table>
+    <div class="container">
+        <div class="header">
+            <h1>Staff Directory</h1>
+            <p>Find contact information for our team members</p>
+        </div>
+        
+        <table>
+            <tr>
+                <th>Staff ID</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+            {% for staff in staffs %}
+            <tr>
+                <td><span class="staff-id">{{ staff.staff_id }}</span></td>
+                <td>{{ staff.name }}</td>
+                <td>{{ staff.email }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3" class="no-data">No staff available</td></tr>
+            {% endfor %}
+        </table>
+    </div>
 </body>
 </html>

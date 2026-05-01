@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
+from .models import SubExam
 from .models import Book
-
+from django.shortcuts import render
+from .models import Donation
 from django.contrib import messages
 from .models import AdminUser
 from django.contrib.auth.hashers import make_password, check_password
@@ -11,24 +13,19 @@ from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import Student,StaffUser 
-
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password
 from .models import Student, StaffUser
-
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password
 from .models import Student, StaffUser
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password
 from .models import Student, StaffUser, HODUser
 import requests
-
-
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -36,8 +33,6 @@ from django.utils.encoding import force_bytes
 from .utils import student_token_generator as default_token_generator
 from django.contrib.auth.hashers import make_password
 from .models import Student, StaffUser, HODUser
-
-# --- LOGIN VIEW (your existing code) ---
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -45,76 +40,146 @@ from django.utils.encoding import force_bytes
 from .utils import student_token_generator as default_token_generator
 from django.contrib.auth.hashers import make_password, check_password
 from .models import Student, StaffUser, HODUser
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+from .models import StaffUser  
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.hashers import check_password
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+from .models import AdminUser
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import  Book  
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.utils import timezone
+from django.contrib import messages
+from datetime import timedelta
+from django.utils import timezone
+from django.contrib import messages
+from .models import Student, StaffUser, HODUser, Borrow
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password, check_password
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from .models import Student, StaffUser, HODUser
+import hashlib
+import time
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password, check_password
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from .models import Student, StaffUser, HODUser
+from .decorators import login_required_custom, role_required
+
+
+# -------------------- CUSTOM TOKEN --------------------
+def make_custom_token(user_obj):
+    timestamp = str(int(time.time()))
+    data = f"{user_obj.pk}{user_obj.password}{timestamp}"
+    token = hashlib.sha256(data.encode()).hexdigest()
+    return f"{token}-{timestamp}"
+
+
+def check_custom_token(user_obj, token, max_age_seconds=3600):
+    try:
+        token_hash, timestamp = token.split("-")
+        if int(time.time()) - int(timestamp) > max_age_seconds:
+            return False  # token expired
+        data = f"{user_obj.pk}{user_obj.password}{timestamp}"
+        expected_hash = hashlib.sha256(data.encode()).hexdigest()
+        return token_hash == expected_hash
+    except:
+        return False
+
 
 def login_view(request):
+    user_id = None
+    password = None
+
     if request.method == "POST":
         user_id = request.POST.get("username")
         password = request.POST.get("password")
 
-        # Admin Login
+        # --- ADMIN LOGIN ---
         if user_id == "admini" and password == "ciet":
             request.session['role'] = 'admin'
             request.session['admin_id'] = 'admini'
             return redirect("admin_dashboard")
 
-        # Student Login
+        # --- STUDENT LOGIN ---
         try:
             student = Student.objects.get(student_id=user_id)
-            if password == student.student_id:
+            if check_password(password, student.password):
                 request.session['role'] = 'student'
                 request.session['student_id'] = student.student_id
                 return redirect("student_broad")
             else:
                 messages.error(request, "Invalid password for student.")
-                return render(request, "login.html")
         except Student.DoesNotExist:
             pass
 
-        # Staff Login
+        # --- STAFF LOGIN ---
         try:
             staff = StaffUser.objects.get(staff_id=user_id)
-            if staff.password == password or check_password(password, staff.password):
+            if check_password(password, staff.password):
                 request.session['role'] = 'staff'
                 request.session['staff_id'] = staff.staff_id
                 return redirect("staff1_dashboard")
             else:
                 messages.error(request, "Invalid password for staff.")
-                return render(request, "login.html")
         except StaffUser.DoesNotExist:
             pass
 
-        # HOD Login
+        # --- HOD LOGIN ---
         try:
             hod = HODUser.objects.get(hod_id=user_id)
-            if hod.password == password or check_password(password, hod.password):
+            if check_password(password, hod.password):
                 request.session['role'] = 'hod'
                 request.session['hod_id'] = hod.hod_id
                 return redirect("staff_dashboard")
             else:
                 messages.error(request, "Invalid password for HOD.")
-                return render(request, "login.html")
         except HODUser.DoesNotExist:
             pass
 
         messages.error(request, "Invalid ID or password.")
+
+    # --- For GET requests just render the login page ---
     return render(request, "login.html")
 
-# --- FORGOT PASSWORD VIEW ---
+
+
+# -------------------- FORGOT PASSWORD --------------------
 def forgot_password(request):
     if request.method == "POST":
         user_id = request.POST.get("user_id")
         user_obj = None
+        uid = None
 
-        # Search user in all models
+        # --- Student ---
         try:
             user_obj = Student.objects.get(student_id=user_id)
+            uid = urlsafe_base64_encode(force_bytes(user_obj.student_id))
         except Student.DoesNotExist:
+            # --- Staff ---
             try:
                 user_obj = StaffUser.objects.get(staff_id=user_id)
+                uid = urlsafe_base64_encode(force_bytes(user_obj.staff_id))
             except StaffUser.DoesNotExist:
+                # --- HOD ---
                 try:
                     user_obj = HODUser.objects.get(hod_id=user_id)
+                    uid = urlsafe_base64_encode(force_bytes(user_obj.hod_id))
                 except HODUser.DoesNotExist:
+                    # --- ADMIN ---
                     if user_id == "admini":
                         messages.success(request, f"Admin reset link: /reset-password/admin/123token/")
                         return render(request, "forgot_password.html")
@@ -122,33 +187,37 @@ def forgot_password(request):
                         messages.error(request, "User ID not found.")
                         return render(request, "forgot_password.html")
 
-        # Generate reset token + link
-        uid = urlsafe_base64_encode(force_bytes(user_obj.pk))
-        token = default_token_generator.make_token(user_obj)
+        # --- Generate custom token & reset link ---
+        token = make_custom_token(user_obj)
         reset_link = request.build_absolute_uri(f"/reset-password/{uid}/{token}/")
-
-        # Instead of sending email, display link on screen
         messages.success(request, f"Password reset link (for testing): {reset_link}")
         return render(request, "forgot_password.html")
 
     return render(request, "forgot_password.html")
 
-# --- RESET PASSWORD VIEW ---
+
+# -------------------- RESET PASSWORD --------------------
 def reset_password(request, uidb64, token):
+    user_obj = None
+
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
-        user_obj = None
-
-        for model in [Student, StaffUser, HODUser]:
+        # Check among all user models
+        for model, id_field in [
+            (Student, 'student_id'),
+            (StaffUser, 'staff_id'),
+            (HODUser, 'hod_id')
+        ]:
             try:
-                user_obj = model.objects.get(pk=uid)
+                user_obj = model.objects.get(**{id_field: uid})
                 break
             except model.DoesNotExist:
                 continue
     except Exception:
         user_obj = None
 
-    if user_obj and default_token_generator.check_token(user_obj, token):
+    # --- Verify custom token ---
+    if user_obj and check_custom_token(user_obj, token):
         if request.method == "POST":
             new_password = request.POST.get("new_password")
             confirm_password = request.POST.get("confirm_password")
@@ -161,6 +230,7 @@ def reset_password(request, uidb64, token):
             else:
                 messages.error(request, "Passwords do not match.")
         return render(request, "reset_password.html")
+
     else:
         messages.error(request, "Invalid or expired reset link.")
         return redirect('login')
@@ -170,10 +240,9 @@ def reset_password(request, uidb64, token):
 
 
 
-from django.contrib import messages
-from django.contrib.auth.hashers import make_password
-from .models import StaffUser
 
+
+@role_required(['admin'])
 def staff_create(request):
     if request.method == "POST":
         staff_id = request.POST.get("staff_id")
@@ -197,36 +266,17 @@ def staff_create(request):
             return redirect("staff_list")
 
     return render(request, "staff_create.html")
-
-
+@role_required(['admin', 'hod'])
 def staff_list(request):
     staffs = StaffUser.objects.all()
     return render(request, "staff_list.html", {"staffs": staffs})
-
-
-
-
-    
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth.hashers import check_password
- # import your custom model
-
-
+@role_required(['admin'])
 def dashboard(request):
- 
     return render(request, "dashboard.html")
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.contrib.auth.hashers import make_password
-from .models import AdminUser
 
 def index(request):
     return render(request,"index.html")
-
-
-# Page to add a new book
-# Page to add a new book
+@login_required_custom   
 def add_book(request):
     if request.method == "POST":
         scanner = request.POST['scanner']
@@ -263,15 +313,7 @@ def add_book(request):
         return redirect('available')  # redirect to function name
 
     return render(request, 'add_book.html')
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import  Book   # <-- Import both models
-
-
-
-
-# Show available books
+@login_required_custom
 def available_books(request):
     books = Book.objects.all()
 
@@ -285,34 +327,33 @@ def available_books(request):
     return render(request, 'available.html', {'books': books})
 
 
-# Borrow a book
 
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-
-
+@login_required_custom
 def scan_page(request):
     return render(request, "scanner.html")
 
+@login_required_custom
 def save_student(request):
     if request.method == "POST":
         student_id = request.POST.get("student_id")
         student_name = request.POST.get("student_name")
         student_email = request.POST.get("student_email")
-        student_password = make_password("student_password")  # default password, you can modify
+        password = make_password("password")  # default password, you can modify
         
         # create StudentUser with only ID and Name
         student = Student(
             student_id=student_id,
             student_name=student_name,
             student_email=student_email,
-            student_password=student_password,
+            password=password,
             last_login=timezone.now(),
             is_active=True,
         )
         student.save()
        
     return redirect("scan")
+
+@login_required_custom
 def student_detail(request, student_id):
     student = Student.objects.get(id=student_id)
     return render(request, "student_detail.html", {"student": student})
@@ -372,13 +413,6 @@ def deletes_stud(request):
 
     return render(request, "deletes_stud.html")
 
-
-from datetime import timedelta
-from django.utils import timezone
-from django.contrib import messages
-
-from .models import Student, StaffUser, HODUser, Borrow
-
 def get_user_info(user_id, user_name):
     """
     Return a dict with:
@@ -402,10 +436,7 @@ def get_user_info(user_id, user_name):
 
     return None
 
-
-from .models import Borrow
-
-# STEP 1: Scan Student
+@login_required_custom
 def borrow(request):
     if request.method == "POST":
         user_id   = request.POST.get("student_id", "").strip()
@@ -420,7 +451,7 @@ def borrow(request):
         return redirect("scan_book")
     return render(request, "borrow.html")
 
-
+@login_required_custom
 def borrow_view(request):
     if request.method == "POST":
         student_id = request.POST.get("student_id")
@@ -437,11 +468,7 @@ def borrow_view(request):
 
     return render(request, "borrow_book.html")
 
-
-
-from django.utils import timezone
-from django.contrib import messages
-
+@login_required_custom
 def scan_book(request):
     info      = request.session.get("user_info")
     user_id   = request.session.get("user_id")
@@ -453,8 +480,6 @@ def scan_book(request):
     if request.method == "POST":
         book_id   = request.POST.get("scanner")
         book_name = request.POST.get("title")
-
-        # 1) If already borrowed by this user, return it
         existing = Borrow.objects.filter(
             student_id=user_id, book_id=book_id, returned=False
         ).first()
@@ -465,8 +490,6 @@ def scan_book(request):
             existing.save()
             messages.success(request, f"✅ '{book_name}' returned!")
             return redirect("borrow_list")
-
-        # 2) Count active borrows within window or overall
         if info['period']:
             cutoff = timezone.now() - timedelta(days=info['period'])
             count  = Borrow.objects.filter(
@@ -479,13 +502,9 @@ def scan_book(request):
             period = "this semester" if info['period'] else ""
             messages.error(request, f"❌ Limit reached: {info['limit']} books {period}")
             return render(request, "scan_book.html", {"error":"Limit exceeded"})
-
-        # 3) Ensure book isn’t currently borrowed by anyone else
         if Borrow.objects.filter(book_id=book_id, returned=False).exists():
             messages.error(request, f"❌ '{book_name}' is unavailable!")
             return render(request, "scan_book.html", {"error":"Book unavailable"})
-
-        # 4) Create a new borrow record
         new = Borrow.objects.create(
             student_id=user_id,
             student_name=user_name,
@@ -493,7 +512,6 @@ def scan_book(request):
             book_name=book_name,
            
         )
-        # Override due_date according to user type
         new.due_date = new.borrowed_at + timedelta(days=info['due_days'])
         new.save()
 
@@ -502,8 +520,6 @@ def scan_book(request):
         return redirect("borrow_list")
 
     return render(request, "scan_book.html")
-
-
 def get_student_status(student_id):
     """Get student's borrowing status and fines"""
     active_borrows = Borrow.objects.filter(student_id=student_id, returned=False)
@@ -521,12 +537,9 @@ def get_student_status(student_id):
         'can_borrow': active_borrows.count() < 4 and total_fine == 0
     }
 
-
-# STEP 3: Borrow List
+@login_required_custom
 def borrow_list(request):
     records = Borrow.objects.all().order_by('-borrowed_at')
-    
-    # Calculate fines and duration for all records
     for record in records:
         if record.returned and record.returned_at:
             # Calculate actual duration for returned books
@@ -540,7 +553,7 @@ def borrow_list(request):
 
     return render(request, 'borrow_list.html', {'records': records})
 
-
+@role_required(['student'])
 def student_status(request):
     """Student dashboard showing their borrow status"""
     if request.session.get('user_type') != 'student':
@@ -565,7 +578,7 @@ def student_status(request):
     return render(request, 'student_status.html', context)
 
     
-
+@login_required_custom
 # STEP 4: Mark as Returned
 def return_book(request, borrow_id):
     borrow = Borrow.objects.get(id=borrow_id)
@@ -577,6 +590,7 @@ from django.shortcuts import render
 from django.utils import timezone
 from .models import Borrow
 
+@login_required_custom
 def search_borrow(request):
     if request.method == "POST":
         entered_id = request.POST.get("student_id").strip()
@@ -603,23 +617,23 @@ def search_borrow(request):
 
     return render(request, "search_borrow.html")
 
-
+@role_required(['admin'])
 def show(request):
     data=Book.objects.all()
     return render(request,'delete_book.html',{'data':data})
 
+@role_required(['admin'])
 def delete(request,idn):
     obj=Book.objects.get(id=idn)
     obj.delete()
     return redirect('/show/')
 
-
-
-
+@role_required(['admin'])
 def show1(request):
     data=Student.objects.all()
     return render(request,'delete_student.html',{'data':data})
 
+@role_required(['admin'])
 def delete1(request,idn1):
     obj=Student.objects.get(id=idn1)
     obj.delete()
@@ -649,7 +663,7 @@ import csv, io
 
 from .forms import UploadFileForm
 from .models import Student  # make sure Student is imported
-
+@role_required(['admin'])
 def bulk_upload_students(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -657,6 +671,7 @@ def bulk_upload_students(request):
             f = request.FILES['file']
             created, updated, skipped = 0, 0, 0
             seen_emails = set()  # Track emails to avoid duplicates within upload batch
+
             try:
                 if f.name.endswith('.xlsx'):
                     wb = load_workbook(filename=BytesIO(f.read()), data_only=True)
@@ -668,8 +683,9 @@ def bulk_upload_students(request):
                             data = dict(zip(headers, row))
                             sid = str(data.get('student_id')).strip() if data.get('student_id') else None
                             email = str(data.get('student_email')).strip() if data.get('student_email') else None
+                            password = str(data.get('password')).strip() if data.get('password') else None
 
-                            # Skip if ID or email is missing or email is duplicated in this import batch
+                            # Skip if ID or email is missing or email is duplicated
                             if not sid or not email or email in seen_emails:
                                 skipped += 1
                                 continue
@@ -678,7 +694,7 @@ def bulk_upload_students(request):
                             defaults = {
                                 'student_name': data.get('student_name') or '',
                                 'student_email': email,
-                                # add other fields as needed
+                                'password': make_password(password if password else 'default123'),  # default password
                             }
 
                             obj, created_flag = Student.objects.update_or_create(
@@ -696,6 +712,7 @@ def bulk_upload_students(request):
                         for data in reader:
                             sid = str(data.get('student_id')).strip() if data.get('student_id') else None
                             email = str(data.get('student_email')).strip() if data.get('student_email') else None
+                            password = str(data.get('password')).strip() if data.get('password') else None
 
                             if not sid or not email or email in seen_emails:
                                 skipped += 1
@@ -705,7 +722,7 @@ def bulk_upload_students(request):
                             defaults = {
                                 'student_name': data.get('student_name') or '',
                                 'student_email': email,
-                                # add other fields as needed
+                                'password': make_password(password if password else 'default123'),
                             }
 
                             obj, created_flag = Student.objects.update_or_create(
@@ -722,12 +739,16 @@ def bulk_upload_students(request):
 
                 messages.success(request, f"Students Imported → created:{created}, updated:{updated}, skipped:{skipped}")
                 return redirect('dashboard')
+
             except Exception as e:
                 messages.error(request, f"Error: {e}")
                 return redirect('bulk_upload_students')
+
     else:
         form = UploadFileForm()
+
     return render(request, "bulk_upload_students.html", {"form": form})
+
 
 
 # yourapp/views.py
@@ -742,7 +763,7 @@ import csv, io
 from .forms import UploadFileForm
 from .models import  Book
 
-
+@role_required(['admin'])
 def bulk_upload_books(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -824,7 +845,7 @@ def bulk_upload_books(request):
 from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
 from django.http import JsonResponse
-
+@login_required_custom
 def book_abstract(request, pk):
     """
     AJAX view: returns JSON {'html': rendered_html} for the book abstract.
@@ -836,7 +857,7 @@ def book_abstract(request, pk):
 
 from django.shortcuts import render
 from django.core.mail import send_mail
-
+@login_required_custom
 def report_issue_view(request):
     if request.method == "POST":
         book_id = request.POST.get("book_id")
@@ -877,7 +898,7 @@ Our librarian will review it soon.
 """
 
         from_email = "sarangvss06@gmail.com"
-        recipient_list = ["rahulbalu330@gmail.com"]
+        recipient_list = ["vinothkumar.s.ciet@gmail.com"]
 
         # Send email using Twilio SendGrid
         send_mail(
@@ -906,6 +927,7 @@ from django.contrib import messages
 from .models import Admin
 
 # Create Admin
+@role_required(['superuser'])
 def admin_register(request):
     if request.method == "POST":
         username = request.POST.get("username")
@@ -935,13 +957,14 @@ def login_vieww(request):
 
     return render(request, "super_login.html")
 
+@role_required(['admin'])
 def dashboard1 (request):
     return render(request, "dashboard1.html")
 
 
 from django.shortcuts import render, redirect
 from .models import Gate
-
+@login_required_custom
 # Add or update a gate
 def add_gate(request):
     if request.method == "POST":
@@ -984,6 +1007,7 @@ def add_gate(request):
 
 
 # List all gates
+@login_required_custom
 def gate_books(request):
     gates = Gate.objects.all()  # Fetch all records
     return render(request, 'gate_books.html', {'gates': gates})
@@ -1008,6 +1032,7 @@ def gate_login(request):
 from django.shortcuts import render
 from .models import Gate, Borrow  # make sure Borrow exists
 
+@login_required_custom
 def gate_books(request):
     gates = Gate.objects.all()  # fetch all gates
 
@@ -1020,7 +1045,7 @@ def gate_books(request):
 
     return render(request, 'avabilable_gate.html', {'books': gates})
 
-
+@login_required_custom
 def borrow_gate(request):
     if request.method == "POST":
         student_id = request.POST.get("student_id")
@@ -1039,7 +1064,7 @@ def borrow_gate(request):
 # myapp/views.py
 from .models import IssuedBook   # ✅ add this at the top
 
-
+@login_required_custom
 def scan_gate(request):
     if request.method == "POST":
         book_id = request.POST.get("scanner")
@@ -1072,6 +1097,8 @@ def scan_gate(request):
         return redirect("borrow_listt")
 
     return render(request, "scan_gate.html")
+
+@login_required_custom
 def borrow_listt(request):
     records = IssuedBook.objects.all().order_by('borrowed_at')
     
@@ -1085,6 +1112,7 @@ def borrow_listt(request):
 
     return render(request, 'borrow_listt.html', {'records': records})
 
+@login_required_custom
 def return_book(request, borrow_id):
     IssuedBook = IssuedBook.objects.get(id=borrow_id)
     IssuedBook.returned = True   # ✅ FIXED
@@ -1101,6 +1129,7 @@ from .models import Newspaper
 def check_admin_session(request):
     return request.session.get('admin_logged_in', False)
 
+@role_required(['admin'])
 def newspaper_upload(request):
     if request.method == "POST":
         form = NewspaperForm(request.POST, request.FILES)
@@ -1117,11 +1146,13 @@ def newspaper_upload(request):
 
 
 # List view (all users can see)
+@login_required_custom
 def newspaper_list(request):
     newspapers = Newspaper.objects.all().order_by("-publish_date")
     return render(request, "newspaper_list.html", {"newspapers": newspapers})
 
 # Delete newspaper (admin only)
+@role_required(['admin'])
 def newspaper_delete(request, pk):
     if not check_admin_session(request):
         return redirect('admin_login')
@@ -1132,10 +1163,11 @@ def newspaper_delete(request, pk):
     messages.success(request, "🗑 Newspaper deleted successfully!")
     return redirect("newspaper_upload")
 
-    
+@role_required(['student'])   
 def student_broad(request):
-
     return render(request, "student_broad.html")
+
+@login_required_custom
 def report_issue(request):
     return render(request, "report_issue.html")
 
@@ -1165,6 +1197,7 @@ from .models import PurchaseRequest, Book, StaffUser, HODUser, HODMessage
 # ----------------------------
 # HOD purchase request page (UPDATED - now HOD only)
 # ----------------------------
+@role_required(['hod'])
 def request_purchase(request):
     if request.method == "POST":
         form = PurchaseRequestForm(request.POST)
@@ -1193,6 +1226,7 @@ def request_purchase(request):
 # ----------------------------
 # HOD dashboard with notifications (UPDATED)
 # ----------------------------
+@role_required(['hod'])
 def staff_dashboard(request):
     """This is now HOD dashboard with full features"""
     if request.session.get('role') != 'hod':  # Changed role check
@@ -1211,6 +1245,7 @@ def staff_dashboard(request):
 # ----------------------------
 # Fetch unread notifications for HOD (UPDATED)
 # ----------------------------
+@role_required(['hod'])
 def get_unread_notifications(request):
     hod_id = request.session.get("hod_id")  # Changed
     if not hod_id:
@@ -1234,6 +1269,7 @@ def get_unread_notifications(request):
 # ----------------------------
 # Mark HOD notifications as read (UPDATED)
 # ----------------------------
+@role_required(['hod'])
 def mark_notifications_read(request):
     if request.method == "POST":
         hod_id = request.session.get("hod_id")  # Changed
@@ -1245,6 +1281,7 @@ def mark_notifications_read(request):
 # ----------------------------
 # Approve request - send notification to HOD (UPDATED)
 # ----------------------------
+@role_required(['admin'])
 def approve_request(request, pk):
     req = get_object_or_404(PurchaseRequest, pk=pk)
     req.status = "Approved"
@@ -1263,6 +1300,7 @@ def approve_request(request, pk):
 # ----------------------------
 # Reject request - send notification to HOD (UPDATED)
 # ----------------------------
+@role_required(['admin'])
 def reject_request(request, pk):
     req = get_object_or_404(PurchaseRequest, pk=pk)
     req.status = "Rejected"
@@ -1282,6 +1320,7 @@ def reject_request(request, pk):
 # ----------------------------
 # Regular Staff Dashboard (UNCHANGED - this is perfect)
 # ----------------------------
+@role_required(['staff'])
 def staff1_dashboard(request):
     """
     Simple dashboard for regular staff members
@@ -1305,6 +1344,7 @@ def staff1_dashboard(request):
 # ----------------------------
 # Admin/Purchase Request Views (UNCHANGED - these are perfect)
 # ----------------------------
+@role_required(['admin','hod'])
 def view_purchase_requests(request):
     requests_list = PurchaseRequest.objects.all().order_by('-request_date')
 
@@ -1323,6 +1363,7 @@ def view_purchase_requests(request):
         'status_filter': status_filter or ''
     })
 
+@role_required(['admin','hod'])
 def purchase_requests_list(request):
     status_filter = request.GET.get('status', '')
 
@@ -1345,22 +1386,24 @@ def purchase_requests_list(request):
 from django.shortcuts import render
 from .models import MainExam
 
-
+@login_required_custom
 def exam_dashboard(request):
     exams = MainExam.objects.all()  # Fetch all MainExam entries
     return render(request, 'exam_dashboard.html', {'exams': exams})
 
+@login_required_custom
 def subbranches(request, main_exam_id):
     exam = get_object_or_404(MainExam, id=main_exam_id)
     subbranches = SubExam.objects.filter(main_exam=exam)
     return render(request, 'subbranches.html', {'exam': exam, 'subbranches': subbranches})
 
+@login_required_custom
 def subbranch_details(request, sub_exam_id):
     subbranch = get_object_or_404(SubExam, id=sub_exam_id)
     return render(request, 'subbranch_details.html', {'subbranch': subbranch})
 
+@role_required(['admin'])
 def admin_dashboard(request):
- 
     return render(request, 'admin_dashboard.html')
 
 # Add these HOD views to your views.py
@@ -1370,6 +1413,7 @@ from .models import HODUser
 # ----------------------------
 # HOD Create
 # ----------------------------
+@role_required(['admin'])
 def hod_create(request):
     if request.method == "POST":
         hod_id = request.POST.get("hod_id")
@@ -1401,6 +1445,7 @@ def hod_create(request):
 # ----------------------------
 # HOD List
 # ----------------------------
+@role_required(['admin'])
 def hod_list(request):
     hods = HODUser.objects.all().order_by('hod_id')
     return render(request, "hod_list.html", {"hods": hods})
@@ -1409,7 +1454,7 @@ import barcode
 from barcode.writer import ImageWriter
 from io import BytesIO
 import base64
-
+@role_required(['admin', 'hod','staff'])
 def generate_barcode_view(request):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -1456,3 +1501,75 @@ def generate_barcode_view(request):
         return render(request, 'barcode_result.html', context)
     else:
         return render(request, 'generate_barcode.html')
+
+
+from django.shortcuts import render
+from .models import Book, Donation, Borrow
+from django.shortcuts import render, redirect
+from .models import Donation, Book, Borrow
+from .decorators import login_required_custom, role_required  # if you have custom decorators
+
+@login_required_custom
+def donate_book(request):
+    if request.method == 'POST':
+        Donation.objects.create(
+            scanner_id=request.POST.get('scanner_id'),
+            title=request.POST.get('title'),
+            author=request.POST.get('author'),
+            year=request.POST.get('year'),
+            publisher=request.POST.get('publisher'),
+            department=request.POST.get('department'),
+            abstract=request.POST.get('abstract'),
+            available=request.POST.get('available'),
+            donor_name=request.POST.get('donor_name'),
+            donor_type=request.POST.get('donor_type'),
+            donor_email=request.POST.get('donor_email'),
+            donor_phone=request.POST.get('donor_phone'),
+            donor_id=request.POST.get('donor_id'),
+            donation_date=request.POST.get('donation_date'),
+            remarks=request.POST.get('remarks'),
+        )
+        return redirect('donation-details')  # redirect to donation details page
+
+    return render(request, 'donate_books.html')
+
+
+@role_required(['admin', 'hod', 'staff'])
+def view_donors(request):
+    donors = Donation.objects.all().order_by('-donation_date')
+    return render(request, 'view_donors.html', {'donors': donors})
+
+
+@role_required(['admin', 'hod', 'staff'])
+def donation_details(request):
+    donations = Donation.objects.all().order_by('-donation_date')
+    return render(request, 'donation_details.html', {'donations': donations})
+
+
+@role_required(['admin', 'hod', 'staff', 'student'])
+def available_books(request):
+    # ✅ Get all library books
+    library_books = Book.objects.all()
+
+    # ✅ Check availability for library books
+    for b in library_books:
+        b.is_currently_available = not Borrow.objects.filter(
+            book_id=b.scanner,
+            returned=False
+        ).exists()
+
+    # ✅ Get donation books that are available
+    donation_books = Donation.objects.filter(available='Yes')
+
+    # ✅ Normalize donation fields to match layout
+    for d in donation_books:
+        d.is_currently_available = True
+        d.scanner = getattr(d, 'scanner_id', None) or getattr(d, 'id', None) or 'N/A'
+        d.abstract = getattr(d, 'abstract', '') or getattr(d, 'remarks', '')
+
+    # ✅ Combine both
+    books = list(library_books) + list(donation_books)
+
+    return render(request, 'available.html', {'books': books})
+
+

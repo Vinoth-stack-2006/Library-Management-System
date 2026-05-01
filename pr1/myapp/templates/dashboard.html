@@ -202,6 +202,16 @@
       --card-color: var(--accent);
       --card-color-light: #48c9b0;
     }
+    
+    .card-donation { 
+      --card-color: #e84393;
+      --card-color-light: #fd79a8;
+    }
+    
+    .card-donors { 
+      --card-color: #00b894;
+      --card-color-light: #55efc4;
+    }
 
     /* Stats section */
     .stats-section {
@@ -297,7 +307,6 @@
       <p class="subtitle">Streamline your library operations with our comprehensive management system</p>
     </div>
 
-
     <!-- Main Dashboard Grid -->
     <div class="dashboard-grid">
       <!-- Borrow & Return Book -->
@@ -310,6 +319,14 @@
         <button class="card-button">Go to Borrow/Return</button>
       </div>
 
+    <div class="dashboard-card card-view fade-in" onclick="location.href='/borrow-list/'">
+        <div class="card-icon">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <h3 class="card-title">Borrow History</h3>
+        <p class="card-description">View your complete borrowing and return history.</p>
+        <button class="card-button">View History</button>
+      </div>
       <!-- View Books -->
       <div class="dashboard-card card-view fade-in" onclick="location.href='/available/'">
         <div class="card-icon">
@@ -438,6 +455,26 @@
         <h3 class="card-title">Barcode Generator</h3>
         <p class="card-description">Create and print barcodes for new books and library materials with customizable formats.</p>
         <button class="card-button">Generate Barcode</button>
+      </div>
+
+      <!-- Donation Book Card -->
+      <div class="dashboard-card card-donation fade-in" onclick="location.href='/donate-books/'">
+        <div class="card-icon">
+          <i class="fas fa-gift"></i>
+        </div>
+        <h3 class="card-title">Donation Book</h3>
+        <p class="card-description">Add books donated to the library collection with donor information and acknowledgment tracking.</p>
+        <button class="card-button">Donate Book</button>
+      </div>
+
+      <!-- View Donors Card -->
+      <div class="dashboard-card card-donors fade-in" onclick="location.href='/view-donors/'">
+        <div class="card-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3 class="card-title">View Donors</h3>
+        <p class="card-description">See who donated the books and their details with comprehensive donor management and reporting.</p>
+        <button class="card-button">View Donors</button>
       </div>
     </div>
   </div>

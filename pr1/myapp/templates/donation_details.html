@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Donation Book Details</title>
+
+<!-- CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.5/css/buttons.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.css">
+
+<style>
+body {
+  background: linear-gradient(-45deg, #667eea, #764ba2, #6ee7b7, #3b82f6);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+@keyframes gradientBG {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
+}
+
+.card {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  animation: fadeSlide 1.2s ease;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+}
+
+.card-header {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #3b82f6, #9333ea);
+  color: white;
+  letter-spacing: 1px;
+  animation: glowPulse 2s infinite;
+}
+
+table.dataTable {
+  width: 100% !important;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+table.dataTable thead th {
+  background: #3b82f6;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 5px 5px 0 0;
+}
+
+table.dataTable tbody tr {
+  background: white;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+table.dataTable tbody tr:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.dataTables_wrapper .dataTables_filter {
+  float: right;
+  text-align: right;
+}
+
+.btn {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+.btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+
+.badge {
+  animation: fadeIn 1.5s ease;
+}
+
+/* Animations */
+@keyframes fadeSlide { from { opacity: 0; transform: translateY(-40px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes glowPulse { 0%, 100% { text-shadow: 0 0 10px rgba(255,255,255,0.7); } 50% { text-shadow: 0 0 25px rgba(255,255,255,1); } }
+
+@media (max-width: 768px) {
+  .card-header h3 { font-size: 1.2rem; }
+  table { font-size: 0.85rem; }
+  .btn { font-size: 0.7rem; padding: 3px 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container-fluid my-4">
+  <div class="card shadow-lg">
+    <div class="card-header">
+      <h3 class="mb-0">📚 Donation Book Details</h3>
+    </div>
+
+    <div class="card-body table-responsive">
+      <table id="donationTable" class="display nowrap table table-striped table-bordered" style="width:100%">
+        <thead>
+          <tr>
+            <th>Scanner ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Year</th>
+            <th>Publisher</th>
+            <th>Department</th>
+            <th>Abstract</th>
+            <th>Available</th>
+            <th>Donor Name</th>
+            <th>Donor Type</th>
+            <th>Donor Email</th>
+            <th>Donor Phone</th>
+            <th>Donor ID</th>
+            <th>Donation Date</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for donation in donations %}
+          <tr>
+            <td>{{ donation.scanner_id }}</td>
+            <td>{{ donation.title }}</td>
+            <td>{{ donation.author }}</td>
+            <td>{{ donation.year }}</td>
+            <td>{{ donation.publisher }}</td>
+            <td>{{ donation.department }}</td>
+            <td>{{ donation.abstract }}</td>
+            <td>{{ donation.available }}</td>
+            <td>{{ donation.donor_name }}</td>
+            <td>{{ donation.donor_type }}</td>
+            <td>{{ donation.donor_email }}</td>
+            <td>{{ donation.donor_phone }}</td>
+            <td>{{ donation.donor_id }}</td>
+            <td>{{ donation.donation_date }}</td>
+            <td>{{ donation.remarks }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="15" class="text-center text-muted">No donations yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.5/js/dataTables.buttons.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<script>
+$(document).ready(function() {
+  $('#donationTable, #donorTable').DataTable({
+    responsive: true,
+    layout: {
+      topStart: {
+        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
+      }
+    },
+    language: {
+      search: "INPUT",
+      searchPlaceholder: "Search books..."
+    }
+  })});
+</script>
+
+</body>
+</html>

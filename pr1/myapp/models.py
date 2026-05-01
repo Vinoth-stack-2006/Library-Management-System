@@ -55,7 +55,7 @@ class Student(models.Model):
     student_id = models.CharField(max_length=50, unique=True, null=False, blank=False)
     student_name = models.CharField(max_length=100, null=True, blank=True)  # optional name
     student_email = models.EmailField(unique=True)
-    student_password = models.CharField(max_length=100)
+    password = models.CharField(max_length=100)
     last_login = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
   
@@ -308,3 +308,28 @@ class SubExam(models.Model):
 
 class Books:
     barcode_image = models.ImageField(upload_to='barcodes/', null=True,blank=True)
+
+
+
+    from django.db import models
+
+class Donation(models.Model):
+    scanner_id = models.CharField(max_length=100)
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=200)
+    year = models.PositiveIntegerField(null=True, blank=True)
+    publisher = models.CharField(max_length=200, null=True, blank=True)
+    department = models.CharField(max_length=100, null=True, blank=True)
+    abstract = models.TextField(null=True, blank=True)
+    available = models.CharField(max_length=10, choices=[('Yes','Yes'),('No','No')], default='Yes')
+
+    donor_name = models.CharField(max_length=200, null=True, blank=True)
+    donor_type = models.CharField(max_length=100, null=True, blank=True)
+    donor_email = models.EmailField(null=True, blank=True)
+    donor_phone = models.CharField(max_length=20, null=True, blank=True)
+    donor_id = models.CharField(max_length=100, null=True, blank=True)
+    donation_date = models.DateField(null=True, blank=True)
+    remarks = models.CharField(max_length=300, null=True, blank=True)
+
+    def _str_(self):
+        return self.title

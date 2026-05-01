@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Available Books - Library Management System</title>
 
   <!-- CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.5/css/buttons.dataTables.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.datatables.net/buttons/3.2.5/css/buttons.dataTables.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
 
   <style>
     :root {
@@ -61,32 +76,6 @@
       font-size: 1.1rem;
       opacity: 0.9;
       margin-bottom: 0;
-    }
-
-    .stats-section {
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      box-shadow: var(--shadow);
-    }
-
-    .stat-item {
-      text-align: center;
-      padding: 1rem;
-    }
-
-    .stat-number {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
-      font-size: 0.9rem;
-      color: var(--text-light);
-      font-weight: 500;
     }
 
     .card {
@@ -207,20 +196,13 @@
     .modal-body {
       padding: 2rem;
       line-height: 1.6;
+      outline: none; /* for focus */
+      max-height: 70vh;
+      overflow-y: auto;
     }
 
     .btn-close {
       filter: invert(1);
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .fade-in {
-      animation: fadeIn 0.8s ease forwards;
     }
 
     /* Responsive Design */
@@ -228,76 +210,67 @@
       .page-header {
         padding: 2rem 1.5rem;
       }
-      
+
       .page-header h1 {
         font-size: 1.8rem;
       }
-      
+
       .card-body {
         padding: 1.5rem;
       }
-      
-      .stats-section {
-        padding: 1rem;
-      }
-      
-      .stat-number {
-        font-size: 1.5rem;
-      }
-    }
 
-    @media (max-width: 576px) {
-      .dashboard-container {
-        padding: 0 15px;
+      .modal-dialog {
+        width: 90% !important;
+        margin: 1rem auto !important;
       }
-      
-      .page-header {
-        padding: 1.5rem 1rem;
+
+      .modal-content {
+        max-height: 80vh !important;
+        overflow-y: auto !important;
       }
-      
-      .page-header h1 {
-        font-size: 1.5rem;
-      }
-      
-      .card-body {
-        padding: 1rem;
+
+      #abstractModalBody {
+        padding: 1.5rem !important;
+        overflow-y: auto !important;
+        word-wrap: break-word !important;
       }
     }
   </style>
 </head>
 <body>
-
-<div class="dashboard-container">
-  <!-- Page Header -->
-  <div class="page-header fade-in">
-    <h1><i class="fas fa-book-open"></i> Available Books</h1>
-    <p>Browse and manage the complete collection of library books</p>
-  </div>
-
- 
-
-  <!-- Books Table -->
-  <div class="card fade-in">
-    <div class="card-header">
-      <h3><i class="fas fa-table"></i> Books Catalog</h3>
+  <div class="dashboard-container">
+    <!-- Page Header -->
+    <div class="page-header fade-in">
+      <h1><i class="fas fa-book-open"></i> Available Books</h1>
+      <p>Browse and manage the complete collection of library books</p>
     </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table id="example" class="display nowrap table table-hover" style="width:100%">
-          <thead>
-            <tr>
-              <th>Scanner ID</th>
-              <th>Title</th>
-              <th>Author</th>
-              <th>Year</th>
-              <th>Publisher</th>
-              <th>Department</th>
-              <th>Abstract</th>
-              <th>Available</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for book in books %}
+
+    <!-- Books Table -->
+    <div class="card fade-in">
+      <div class="card-header">
+        <h3><i class="fas fa-table"></i> Books Catalog</h3>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table
+            id="example"
+            class="display nowrap table table-hover"
+            style="width: 100%"
+          >
+            <thead>
+              <tr>
+                <th>Scanner ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Year</th>
+                <th>Publisher</th>
+                <th>Department</th>
+                <th>Abstract</th>
+                <th>Available</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for book in books %}
               <tr>
                 <td><strong>{{ book.scanner }}</strong></td>
                 <td>{{ book.title }}</td>
@@ -308,119 +281,145 @@
                   <span class="badge bg-light text-dark">{{ book.department }}</span>
                 </td>
                 <td>
-                  <button type="button" class="btn btn-sm btn-outline-primary view-abstract-btn" data-url="{% url 'book_abstract' book.pk %}">
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-primary view-abstract-btn"
+                    data-url="{% url 'book_abstract' book.pk %}"
+                  >
                     <i class="fas fa-eye me-1"></i> View Abstract
                   </button>
                 </td>
                 <td>
                   {% if book.is_currently_available %}
-                    <span class="badge badge-success">Available</span>
+                  <span class="badge badge-success">Available</span>
                   {% else %}
-                    <span class="badge badge-danger">Borrowed</span>
+                  <span class="badge badge-danger">Borrowed</span>
                   {% endif %}
                 </td>
               </tr>
-            {% empty %}
+              {% empty %}
               <tr>
                 <td colspan="8" class="text-center text-muted py-4">
                   <i class="fas fa-book fa-2x mb-3 d-block"></i>
                   No books available in the catalog.
                 </td>
               </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Abstract Modal -->
-<div class="modal fade" id="abstractModal" tabindex="-1" aria-labelledby="abstractModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title"><i class="fas fa-file-alt me-2"></i>Book Abstract</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="abstractModalBody">
-        <div class="text-center py-4">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <p class="mt-2 text-muted">Loading abstract...</p>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- JS -->
-<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.2.5/js/dataTables.buttons.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.dataTables.js"></script>
-<script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.print.min.js"></script>
-
-<script>
-  // Initialize DataTable
-  new DataTable('#example', {
-    responsive: true,
-    layout: {
-      topStart: {
-        buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-      }
-    },
-    language: {
-      search: "Search books:",
-      lengthMenu: "Show _MENU_ entries"
-    }
-  });
-
-  // Abstract Modal Handling
-  document.addEventListener('DOMContentLoaded', function() {
-    const modalEl = document.getElementById('abstractModal');
-    const modalBody = document.getElementById('abstractModalBody');
-    const bsModal = new bootstrap.Modal(modalEl);
-
-    document.querySelectorAll('.view-abstract-btn').forEach(btn => {
-      btn.addEventListener('click', async function() {
-        const url = this.dataset.url;
-        modalBody.innerHTML = `
+  <!-- Abstract Modal -->
+  <div
+    class="modal fade"
+    id="abstractModal"
+    tabindex="-1"
+    aria-labelledby="abstractModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="abstractModalLabel">
+            <i class="fas fa-file-alt me-2"></i> Book Abstract
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body" id="abstractModalBody" tabindex="-1">
           <div class="text-center py-4">
             <div class="spinner-border text-primary" role="status">
               <span class="visually-hidden">Loading...</span>
             </div>
             <p class="mt-2 text-muted">Loading abstract...</p>
           </div>
-        `;
-        bsModal.show();
+        </div>
+      </div>
+    </div>
+  </div>
 
-        try {
-          const res = await fetch(url, { 
-            method: 'GET', 
-            headers: { 'Accept': 'application/json' }
-          });
-          
-          if (!res.ok) throw new Error('Failed to load abstract');
-          const data = await res.json();
-          modalBody.innerHTML = data.html || '<p class="text-muted">No abstract available.</p>';
-        } catch (err) {
-          modalBody.innerHTML = `
-            <div class="alert alert-danger">
-              <i class="fas fa-exclamation-triangle me-2"></i>
-              Failed to load abstract: ${err.message}
-            </div>
-          `;
-        }
-      });
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/2.3.4/js/dataTables.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/dataTables.buttons.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.dataTables.js"></script>
+  <script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.print.min.js"></script>
+
+  <script>
+    // Initialize DataTable
+    const dataTable = new DataTable('#example', {
+      responsive: true,
+      layout: {
+        topStart: {
+          buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+        },
+      },
+      language: {
+        search: 'Search books:',
+        lengthMenu: 'Show MENU entries',
+      },
     });
+
+
+  // Other DataTable initialization code...
+
+  // Replace your old abstract modal handler with this!
+  $(document).on('click', '.view-abstract-btn', async function () {
+    const modalEl = document.getElementById('abstractModal');
+    const modalBody = document.getElementById('abstractModalBody');
+    const bsModal = new bootstrap.Modal(modalEl);
+
+    const url = this.dataset.url;
+    modalBody.innerHTML = `
+      <div class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading abstract...</p>
+      </div>
+    `;
+    bsModal.show();
+
+    try {
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { Accept: 'application/json' }
+      });
+      if (!res.ok) throw new Error('Failed to load abstract');
+      const data = await res.json();
+      modalBody.innerHTML = data.html || '<p class="text-muted">No abstract available.</p>';
+    } catch (err) {
+      modalBody.innerHTML = `
+        <div class="alert alert-danger">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Failed to load abstract: ${err.message}
+        </div>
+      `;
+    }
+  });
+
+  // Keep your modal scroll/focus fixes
+  const modalEl = document.getElementById('abstractModal');
+  modalEl.addEventListener('shown.bs.modal', () => {
+    document.body.style.overflow = 'hidden';
+    const modalBody = modalEl.querySelector('.modal-body');
+    if (modalBody) modalBody.focus();
+  });
+  modalEl.addEventListener('hidden.bs.modal', () => {
+    document.body.style.overflow = '';
   });
 </script>
 

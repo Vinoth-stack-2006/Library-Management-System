@@ -1,2 +1,2 @@
-# LMS Django Project Structure
-# Place all Django project files inside pr1/
+# LMS Project Root
+# Contains requirements.txt, Procfile, and pr1 Django project folder

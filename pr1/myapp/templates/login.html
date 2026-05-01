@@ -35,13 +35,13 @@
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
       position: relative;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     /* Background decoration */
@@ -200,6 +200,8 @@
       justify-content: space-between;
       align-items: center;
       margin-top: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .remember-me {
@@ -300,38 +302,151 @@
       }
     }
 
+    /* Mobile Responsive Styles */
     @media (max-width: 768px) {
+      body {
+        padding: 15px;
+        align-items: flex-start;
+        min-height: 100vh;
+        height: auto;
+      }
+      
       .login-container {
         flex-direction: column;
-        max-width: 450px;
+        max-width: 100%;
+        min-height: auto;
+        margin: 20px 0;
       }
       
       .login-illustration {
         padding: 30px 20px;
+        min-height: 200px;
       }
       
       .illustration-content i {
-        font-size: 60px;
+        font-size: 50px;
+        margin-bottom: 15px;
       }
       
       .illustration-content h2 {
-        font-size: 22px;
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+      
+      .illustration-content p {
+        font-size: 14px;
       }
       
       .login-card {
-        padding: 40px 30px;
+        padding: 30px 25px;
       }
-    }
-
-    @media (max-width: 480px) {
-      .login-card {
-        padding: 30px 20px;
+      
+      .login-header {
+        margin-bottom: 25px;
+      }
+      
+      .login-header h1 {
+        font-size: 24px;
+      }
+      
+      .login-header p {
+        font-size: 14px;
+      }
+      
+      form input {
+        padding: 12px 12px 12px 40px;
+        font-size: 16px; /* Prevents zoom on iOS */
+      }
+      
+      .input-icon {
+        font-size: 16px;
+        left: 12px;
+      }
+      
+      button {
+        padding: 12px;
+        font-size: 16px;
       }
       
       .form-footer {
         flex-direction: column;
-        gap: 15px;
         align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .remember-me {
+        width: 100%;
+      }
+      
+      .form-footer a {
+        width: 100%;
+        text-align: left;
+      }
+      
+      .shape-1, .shape-2, .shape-3 {
+        display: none; /* Hide decorative shapes on small screens */
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 10px;
+      }
+      
+      .login-card {
+        padding: 25px 20px;
+      }
+      
+      .login-header h1 {
+        font-size: 22px;
+      }
+      
+      .login-header p {
+        font-size: 13px;
+      }
+      
+      form label {
+        font-size: 15px; /* Slightly larger for better readability */
+      }
+      
+      .input-group {
+        margin-top: 5px;
+      }
+      
+      form input {
+        padding: 14px 14px 14px 45px; /* Keep padding consistent for touch targets */
+      }
+      
+      .captcha-container {
+        margin: 20px 0;
+      }
+      
+      .login-footer {
+        margin-top: 25px;
+        font-size: 13px;
+      }
+    }
+
+    /* For very small screens */
+    @media (max-width: 360px) {
+      .login-card {
+        padding: 20px 15px;
+      }
+      
+      .login-illustration {
+        padding: 25px 15px;
+      }
+      
+      .illustration-content i {
+        font-size: 40px;
+      }
+      
+      .illustration-content h2 {
+        font-size: 18px;
+      }
+      
+      .illustration-content p {
+        font-size: 13px;
       }
     }
   </style>
@@ -381,16 +496,14 @@
           <i class="fas fa-lock input-icon"></i>
           <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password" />
         </div>
-        <!-- Add this inside your <form> tag, after the password input -->
-
-<label for="captcha">CAPTCHA</label>
-<div class="input-group captcha-container">
-  <i class="fas fa-shield-alt input-icon"></i>
-  <input type="text" id="captchaInput" placeholder="Enter answer" required />
-</div>
-<div id="captchaQuestion" style="margin-top:8px; font-weight:500; color:#2c3e50;"></div>
-<div id="captchaError" style="color:red; margin-top:5px;"></div>
-
+        
+        <label for="captcha">CAPTCHA</label>
+        <div class="input-group captcha-container">
+          <i class="fas fa-shield-alt input-icon"></i>
+          <input type="text" id="captchaInput" placeholder="Enter answer" required />
+        </div>
+        <div id="captchaQuestion" style="margin-top:8px; font-weight:500; color:#2c3e50;"></div>
+        <div id="captchaError" style="color:red; margin-top:5px;"></div>
 
         <div class="form-footer">
           <div class="remember-me">
@@ -413,41 +526,40 @@
   </div>
 
   <!-- Add reCAPTCHA JS -->
-<script>
-  let num1, num2;
+  <script>
+    let num1, num2;
 
-  // Generate a simple math CAPTCHA
-  function generateCaptcha() {
-    num1 = Math.floor(Math.random() * 10) + 1;
-    num2 = Math.floor(Math.random() * 10) + 1;
-    document.getElementById("captchaQuestion").innerText = `What is ${num1} + ${num2}?`;
-  }
-
-  function validateCaptcha() {
-    const userAnswer = parseInt(document.getElementById("captchaInput").value);
-    const errorMsg = document.getElementById("captchaError");
-
-    if (userAnswer === (num1 + num2)) {
-      errorMsg.innerText = "";
-      return true; // allow form submission
-    } else {
-      errorMsg.innerText = "Incorrect CAPTCHA. Try again!";
-      generateCaptcha(); // regenerate CAPTCHA
-      return false; // prevent form submission
+    // Generate a simple math CAPTCHA
+    function generateCaptcha() {
+      num1 = Math.floor(Math.random() * 10) + 1;
+      num2 = Math.floor(Math.random() * 10) + 1;
+      document.getElementById("captchaQuestion").innerText = `What is ${num1} + ${num2}?`;
     }
-  }
 
-  // Initialize CAPTCHA on page load
-  generateCaptcha();
+    function validateCaptcha() {
+      const userAnswer = parseInt(document.getElementById("captchaInput").value);
+      const errorMsg = document.getElementById("captchaError");
 
-  // Attach validation to form submission
-  const form = document.querySelector("form");
-  form.onsubmit = function(e) {
-    if (!validateCaptcha()) {
-      e.preventDefault(); // prevent form submission if CAPTCHA is wrong
+      if (userAnswer === (num1 + num2)) {
+        errorMsg.innerText = "";
+        return true; // allow form submission
+      } else {
+        errorMsg.innerText = "Incorrect CAPTCHA. Try again!";
+        generateCaptcha(); // regenerate CAPTCHA
+        return false; // prevent form submission
+      }
     }
-  }
-</script>
 
+    // Initialize CAPTCHA on page load
+    generateCaptcha();
+
+    // Attach validation to form submission
+    const form = document.querySelector("form");
+    form.onsubmit = function(e) {
+      if (!validateCaptcha()) {
+        e.preventDefault(); // prevent form submission if CAPTCHA is wrong
+      }
+    }
+  </script>
 </body>
 </html>
