@@ -4,13 +4,15 @@ services:
     runtime: python
     pythonVersion: "3.11"
     buildCommand: bash build.sh
-    startCommand: cd pr1 && gunicorn -c gunicorn_config.py pr1.wsgi:application
+    startCommand: bash start.sh
     envVars:
       - key: PYTHONPATH
-        value: "/opt/render/project/src/pr1"
+        value: /opt/render/project/src/pr1
       - key: DJANGO_SETTINGS_MODULE
         value: pr1.settings
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
         value: "*.render.com,localhost,127.0.0.1"
+      - key: PORT
+        value: "8000"
