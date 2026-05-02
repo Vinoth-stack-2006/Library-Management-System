@@ -4,13 +4,9 @@ import os
 import sys
 from pathlib import Path
 
-# Ensure the pr1 package directory is in sys.path
-current_dir = Path(__file__).resolve().parent
-sys.path.insert(0, str(current_dir))
-
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pr1.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

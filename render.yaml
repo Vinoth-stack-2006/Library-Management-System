@@ -3,13 +3,12 @@ services:
     name: lms-app
     runtime: python
     pythonVersion: "3.11"
-    buildCommand: "cd pr1 && pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput"
-    startCommand: "bash run.sh"
+    rootDirectory: pr1
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn pr1.wsgi:application"
     envVars:
-      - key: PYTHONPATH
-        value: "/opt/render/project/src/pr1"
       - key: DJANGO_SETTINGS_MODULE
-        value: "pr1.settings"
+        value: "settings"
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
