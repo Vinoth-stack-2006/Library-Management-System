@@ -3,8 +3,6 @@ services:
     name: lms-app
     runtime: python
     pythonVersion: "3.11"
-    buildCommand: bash build.sh
-    startCommand: bash start.sh
     envVars:
       - key: PYTHONPATH
         value: /opt/render/project/src/pr1
