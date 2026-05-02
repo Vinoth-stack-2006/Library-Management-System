@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management | Borrow Records</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c5aa0;
+            --primary-light: #4a76c4;
+            --secondary: #6c757d;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --danger: #dc3545;
+            --border: #e9ecef;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            margin-bottom: 30px;
+            background: #fff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 20px 30px;
+            border-bottom: none;
+        }
+        
+        .card-body {
+            padding: 30px;
+        }
+        
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .form-control {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.1);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
+        }
+        
+        .table thead th {
+            background: #f1f5f9;
+            color: var(--dark);
+            font-weight: 600;
+            border: none;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .table tbody td {
+            padding: 15px;
+            vertical-align: middle;
+            border-color: var(--border);
+        }
+        
+        .table tbody tr {
+            transition: all 0.2s;
+        }
+        
+        .table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+        
+        .badge-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+        
+        .badge-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+        }
+        
+        .badge-primary {
+            background-color: rgba(44, 90, 160, 0.1);
+            color: var(--primary);
+        }
+        
+        .alert {
+            border-radius: 8px;
+            border: none;
+            padding: 15px 20px;
+        }
+        
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.05);
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+        
+        .search-section {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+        
+        .results-header {
+            color: var(--primary);
+            font-weight: 600;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--secondary);
+        }
+        
+        .empty-state i {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #cbd5e1;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        .input-group-text {
+            background-color: #fff;
+            border: 1px solid var(--border);
+            border-right: none;
+        }
+        
+        .form-control {
+            border-left: none;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 20px;
+            }
+            
+            .table thead {
+                display: none;
+            }
+            
+            .table, .table tbody, .table tr, .table td {
+                display: block;
+                width: 100%;
+            }
+            
+            .table tr {
+                margin-bottom: 15px;
+                border-radius: 8px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                border: 1px solid var(--border);
+            }
+            
+            .table td {
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+                border: none;
+                border-bottom: 1px solid var(--border);
+            }
+            
+            .table td:last-child {
+                border-bottom: none;
+            }
+            
+            .table td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                width: calc(50% - 30px);
+                padding-right: 10px;
+                font-weight: 600;
+                text-align: left;
+                color: var(--dark);
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card fade-in">
+            <div class="card-header">
+                <h1 class="card-title"><i class="fas fa-book-reader"></i> Borrow Records Search</h1>
+            </div>
+            <div class="card-body">
+                <div class="search-section">
+                    <form method="POST" class="row g-3 align-items-center justify-content-center">
+                        {% csrf_token %}
+                        <div class="col-lg-8 col-md-10">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-id-card"></i></span>
+                                <input type="text" name="student_id" class="form-control" placeholder="Enter Student ID" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-8">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search me-2"></i> Search Records
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                {% if error %}
+                    <div class="alert alert-danger fade-in" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i> {{ error }}
+                    </div>
+                {% endif %}
+
+                {% if records %}
+                    <div class="fade-in">
+                        <h3 class="results-header">
+                            <i class="fas fa-list-check"></i> Records for Student ID: {{ entered_id }}
+                        </h3>
+                        
+                        <div class="stats-container">
+                            <div class="stat-card">
+                                <div class="stat-number">{{ records|length }}</div>
+                                <div class="stat-label">Total Records</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">
+                                    {% with active=records|length|add:"-1" %}
+                                        {{ active }}
+                                    {% endwith %}
+                                </div>
+                                <div class="stat-label">Active Borrows</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">1</div>
+                                <div class="stat-label">Returned Books</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">14</div>
+                                <div class="stat-label">Avg. Days</div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Book ID</th>
+                                        <th>Book Name</th>
+                                        <th>Borrowed At</th>
+                                        <th>Returned</th>
+                                        <th>Returned At</th>
+                                        <th>Duration (days)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for r in records %}
+                                    <tr>
+                                        <td data-label="Student Name">{{ r.student_name }}</td>
+                                        <td data-label="Book ID">{{ r.book_id }}</td>
+                                        <td data-label="Book Name">{{ r.book_name }}</td>
+                                        <td data-label="Borrowed At">{{ r.borrowed_at }}</td>
+                                        <td data-label="Returned">
+                                            {% if r.returned %}
+                                                <span class="badge badge-success"><i class="fas fa-check me-1"></i> Returned</span>
+                                            {% else %}
+                                                <span class="badge badge-danger"><i class="fas fa-clock me-1"></i> Pending</span>
+                                            {% endif %}
+                                        </td>
+                                        <td data-label="Returned At">{{ r.returned_at|default:"--" }}</td>
+                                        <td data-label="Duration (days)">
+                                            <span class="badge badge-primary">{{ r.borrow_duration_days }}</span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% elif not error and request.method == "POST" %}
+                    <div class="empty-state fade-in">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No Records Found</h3>
+                        <p>No borrow records found for the provided Student ID.</p>
+                    </div>
+                {% else %}
+                    <div class="empty-state fade-in">
+                        <i class="fas fa-search"></i>
+                        <h3>Search Borrow Records</h3>
+                        <p>Enter a Student ID to view their borrow history.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

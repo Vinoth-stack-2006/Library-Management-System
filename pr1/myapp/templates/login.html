@@ -1,0 +1,453 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CIET Library Login</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #3498db;
+      --accent: #1abc9c;
+      --bg-light: #ffffff;
+      --input-bg: #f8f9fa;
+      --error-bg: #ffeaea;
+      --error-text: #d63031;
+      --text-dark: #2d3436;
+      --text-light: #636e72;
+      --border-light: #e0e6ed;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background decoration */
+    .bg-shapes {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.1;
+    }
+
+    .shape-1 {
+      width: 300px;
+      height: 300px;
+      background: var(--primary);
+      top: -100px;
+      left: -100px;
+    }
+
+    .shape-2 {
+      width: 200px;
+      height: 200px;
+      background: var(--secondary);
+      bottom: -50px;
+      right: 10%;
+    }
+
+    .shape-3 {
+      width: 150px;
+      height: 150px;
+      background: var(--accent);
+      top: 20%;
+      right: -50px;
+    }
+
+    .login-container {
+      display: flex;
+      width: 100%;
+      max-width: 900px;
+      min-height: 550px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      animation: fadeIn 0.8s ease;
+    }
+
+    .login-illustration {
+      flex: 1;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      color: white;
+      position: relative;
+    }
+
+    .illustration-content {
+      text-align: center;
+      z-index: 1;
+    }
+
+    .illustration-content i {
+      font-size: 80px;
+      margin-bottom: 20px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .illustration-content h2 {
+      font-size: 26px;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .illustration-content p {
+      font-size: 16px;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    .login-card {
+      flex: 1;
+      background: var(--bg-light);
+      padding: 50px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .login-header {
+      margin-bottom: 35px;
+    }
+
+    .login-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .login-header p {
+      color: var(--text-light);
+      font-size: 15px;
+    }
+
+    form label {
+      display: block;
+      font-weight: 500;
+      color: var(--text-dark);
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .input-group {
+      position: relative;
+      margin-top: 8px;
+    }
+
+    form input {
+      width: 100%;
+      padding: 14px 14px 14px 45px;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      background-color: var(--input-bg);
+      font-size: 15px;
+      transition: all 0.3s;
+    }
+
+    form input:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+      background-color: #fff;
+      outline: none;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+      font-size: 18px;
+    }
+
+    .form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    .remember-me input {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    .form-footer a {
+      font-size: 14px;
+      color: var(--secondary);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .form-footer a:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .captcha-container {
+      margin: 25px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 14px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #243342, #2980b9);
+      transform: translateY(-2px);
+      box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .error {
+      background-color: var(--error-bg);
+      color: var(--error-text);
+      padding: 12px 16px;
+      margin-top: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      border-left: 4px solid var(--error-text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .error i {
+      font-size: 16px;
+    }
+
+    .login-footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    .login-footer a {
+      color: var(--secondary);
+      text-decoration: none;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .login-container {
+        flex-direction: column;
+        max-width: 450px;
+      }
+      
+      .login-illustration {
+        padding: 30px 20px;
+      }
+      
+      .illustration-content i {
+        font-size: 60px;
+      }
+      
+      .illustration-content h2 {
+        font-size: 22px;
+      }
+      
+      .login-card {
+        padding: 40px 30px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 30px 20px;
+      }
+      
+      .form-footer {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="login-container">
+    <div class="login-illustration">
+      <div class="illustration-content">
+        <i class="fas fa-book-open"></i>
+        <h2>CIET Digital Library</h2>
+        <p>Access thousands of academic resources, research papers, and digital collections in one place.</p>
+      </div>
+    </div>
+
+    <div class="login-card">
+      <div class="login-header">
+        <h1>Welcome Back</h1>
+        <p>Sign in to your library account to continue</p>
+      </div>
+
+      <form method="POST" autocomplete="on">
+        {% csrf_token %}
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="error">
+              <i class="fas fa-exclamation-circle"></i>
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <label for="username">User ID</label>
+        <div class="input-group">
+          <i class="fas fa-user input-icon"></i>
+          <input type="text" id="username" name="username" placeholder="Enter your ID" required autocomplete="username" />
+        </div>
+
+        <label for="password">Password</label>
+        <div class="input-group">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password" />
+        </div>
+        <!-- Add this inside your <form> tag, after the password input -->
+
+<label for="captcha">CAPTCHA</label>
+<div class="input-group captcha-container">
+  <i class="fas fa-shield-alt input-icon"></i>
+  <input type="text" id="captchaInput" placeholder="Enter answer" required />
+</div>
+<div id="captchaQuestion" style="margin-top:8px; font-weight:500; color:#2c3e50;"></div>
+<div id="captchaError" style="color:red; margin-top:5px;"></div>
+
+
+        <div class="form-footer">
+          <div class="remember-me">
+            <input type="checkbox" id="remember" name="remember">
+            <label for="remember">Remember me</label>
+          </div>
+          <a href="{% url 'forgot_password' %}">Forgot password?</a>
+        </div>
+
+        <button type="submit">
+          <i class="fas fa-sign-in-alt"></i>
+          Login to Library
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p>Don't have an account? <a href="#">Contact library administration</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add reCAPTCHA JS -->
+<script>
+  let num1, num2;
+
+  // Generate a simple math CAPTCHA
+  function generateCaptcha() {
+    num1 = Math.floor(Math.random() * 10) + 1;
+    num2 = Math.floor(Math.random() * 10) + 1;
+    document.getElementById("captchaQuestion").innerText = `What is ${num1} + ${num2}?`;
+  }
+
+  function validateCaptcha() {
+    const userAnswer = parseInt(document.getElementById("captchaInput").value);
+    const errorMsg = document.getElementById("captchaError");
+
+    if (userAnswer === (num1 + num2)) {
+      errorMsg.innerText = "";
+      return true; // allow form submission
+    } else {
+      errorMsg.innerText = "Incorrect CAPTCHA. Try again!";
+      generateCaptcha(); // regenerate CAPTCHA
+      return false; // prevent form submission
+    }
+  }
+
+  // Initialize CAPTCHA on page load
+  generateCaptcha();
+
+  // Attach validation to form submission
+  const form = document.querySelector("form");
+  form.onsubmit = function(e) {
+    if (!validateCaptcha()) {
+      e.preventDefault(); // prevent form submission if CAPTCHA is wrong
+    }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ subbranch.name }} - Official Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+        .subbranch-header {
+            background-color: #02475e;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .details-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        .btn-official {
+            background-color: #ffdd00;
+            color: #02475e;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 12px 25px;
+            text-decoration: none;
+        }
+        .btn-official:hover {
+            background-color: #ffc107;
+            color: #02475e;
+        }
+    </style>  
+</head>
+<body>
+<div class="container mt-5">
+    <div class="subbranch-header">
+        <h1>{{ subbranch.name }}</h1>
+        <p>Access the official government portal for this exam</p>
+    </div>
+
+    <div class="details-card">
+    {# ---------------- TNPSC ---------------- #}
+    {% if subbranch.name == "Group 1" %}
+        <a href="https://tnpsc.gov.in/examdashboard/web/index.aspx?notno=04/2025" target="_blank" class="btn-official">🔗 TNPSC Group 1 Official Site</a>
+    {% elif subbranch.name == "Group 2" %}
+        <a href="https://tnpsc.gov.in/examdashboard/web/index.aspx?notno=11/2025" target="_blank" class="btn-official">🔗 TNPSC Group 2 Official Site</a>
+    {% elif subbranch.name == "Group 4 " %}
+        <a href="https://tnpsc.gov.in/examdashboard/web/index.aspx?notno=07/2025" target="_blank" class="btn-official">🔗 TNPSC Group 4 / VAO Official Site</a>
+   {% elif subbranch.name == "Combined Technical Services Exam (ITI Level-2)" %}
+    <a href="https://tnpsc.gov.in/examdashboard/web/index.aspx?notno=13/2025" target="_blank" class="btn-official">
+        🔗 TNPSC Combined Technical Services (ITI Level-2) Official Site
+    </a>
+    {# ---------------- SSC ---------------- #}
+    {% elif subbranch.name == "CGL" %}
+        <a href="https://sscportal.in/cgl" target="_blank" class="btn-official">🔗 SSC CGL Official Site</a>
+    {% elif subbranch.name == "CHSL" %}
+        <a href="https://sscportal.in/chsl" target="_blank" class="btn-official">🔗 SSC CHSL Official Site</a>
+    {% elif subbranch.name == "JE" %}
+        <a href="https://sscportal.in/junior-engineer" target="_blank" class="btn-official">🔗 SSC Junior Engineer Official Site</a>
+    {% elif subbranch.name == "MTS" %}
+        <a href="https://sscportal.in/MTS" target="_blank" class="btn-official">🔗 SSC MTS Official Site</a>
+
+    {# ---------------- UPSC ---------------- #}
+    {% elif subbranch.name == "IAS" %}
+        <a href="https://vajiramandravi.com/upsc-exam/upsc-syllabus/" target="_blank" class="btn-official">🔗 UPSC IAS Official Site</a>
+    {% elif subbranch.name == "IPS" %}
+        <a href="https://vajiramandravi.com/upsc-exam/indian-police-service-ips/" target="_blank" class="btn-official">🔗 UPSC IPS Official Site</a>
+    {% elif subbranch.name == "IFS" %}
+        <a href="https://vajiramandravi.com/upsc-exam/ifos-syllabus/" target="_blank" class="btn-official">🔗 UPSC IFS Official Site</a>
+    {% elif subbranch.name == "IRS" %}
+        <a href="https://vajiramandravi.com/upsc-exam/irs-exam/" target="_blank" class="btn-official">🔗 UPSC IRS Official Site</a>
+
+    {# ---------------- GATE ---------------- #}
+    {% elif subbranch.name == "GATE CS" %}
+        <a href="https://www.geeksforgeeks.org/gate/original-gate-previous-year-question-papers-cse-and-it-gq/" target="_blank" class="btn-official">🔗 GATE Computer Science Official Site</a>
+    {% elif subbranch.name == "GATE EE" %}
+        <a href="https://gatenotes.in/gate-electrical-mock-test.php" target="_blank" class="btn-official">🔗 GATE Electrical Engineering Official Site</a>
+    {% elif subbranch.name == "GATE ME" %}
+        <a href="https://www.gatenotes.in/gate-syllabus-for-mechanical-engineering.php" target="_blank" class="btn-official">🔗 GATE Mechanical Engineering Official Site</a>
+    {% elif subbranch.name == "GATE CE" %}
+        <a href="https://www.selfstudys.com/page/gate-civil-engineering-notes" target="_blank" class="btn-official">🔗 GATE Civil Engineering Official Site</a>
+
+    {# ---------------- Banking ---------------- #}
+    {% elif subbranch.name == "IBPS PO" %}
+        <a href="https://www.ibps.in/" target="_blank" class="btn-official">🔗 IBPS PO Official Site</a>
+    {% elif subbranch.name == "SBI PO" %}
+        <a href="https://sbi.co.in/web/careers" target="_blank" class="btn-official">🔗 SBI PO Official Site</a>
+    {% elif subbranch.name == "IBPS Clerk" %}
+        <a href="https://www.ibps.in/" target="_blank" class="btn-official">🔗 IBPS Clerk Official Site</a>
+    {% elif subbranch.name == "RBI Grade B" %}
+        <a href="https://opportunities.rbi.org.in/" target="_blank" class="btn-official">🔗 RBI Grade B Official Site</a>
+
+    {# ---------------- Railways ---------------- #}
+    {% elif subbranch.name == "RRB NTPC" %}
+        <a href="https://www.adda247.com/exams/railway/rrb-ntpc-graduate-score-card-2025/" target="_blank" class="btn-official">🔗 RRB NTPC Official Site</a>
+    {% elif subbranch.name == "RRB JE" %}
+        <a href="https://www.adda247.com/engineering-jobs/rrb-je/" target="_blank" class="btn-official">🔗 RRB Junior Engineer Official Site</a>
+    {% elif subbranch.name == "RRB ALP" %}
+        <a href="https://www.adda247.com/exams/railway/rrb-alp-2025/" target="_blank" class="btn-official">🔗 RRB ALP Official Site</a>
+    {% elif subbranch.name == "RRB Group D" %}
+        <a href="https://www.adda247.com/exams/railway/rrb-group-d-exam-date-2025-out/" target="_blank" class="btn-official">🔗 RRB Group D Official Site</a>
+
+    {% else %}
+        <p class="text-muted">No official site available for this subbranch.</p>
+    {% endif %}
+</div>
+
+    <div class="text-center mt-4">
+        <a href="{% url 'exam_dashboard' %}" class="btn btn-secondary">⬅ Back to Dashboard</a>
+    </div>
+</div>
+</body>
+</html>
