@@ -2,15 +2,15 @@ services:
   - type: web
     name: lms-app
     runtime: python
-    buildCommand: >
-      pip install -r requirements.txt &&
-      cd pr1 &&
-      python manage.py migrate
-    startCommand: cd pr1 && gunicorn pr1.wsgi:application
+    pythonVersion: "3.11"
+    buildCommand: bash build.sh
+    startCommand: cd pr1 && gunicorn -c gunicorn_config.py pr1.wsgi:application
     envVars:
-      - key: PYTHON_VERSION
-        value: "3.11.9"
+      - key: PYTHONPATH
+        value: "/opt/render/project/src/pr1"
       - key: DJANGO_SETTINGS_MODULE
         value: pr1.settings
       - key: DEBUG
         value: "False"
+      - key: ALLOWED_HOSTS
+        value: "*.render.com,localhost,127.0.0.1"
